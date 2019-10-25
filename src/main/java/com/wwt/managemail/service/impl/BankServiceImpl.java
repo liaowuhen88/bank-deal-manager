@@ -27,8 +27,8 @@ public class BankServiceImpl implements BankService {
     public int transaction(BankBill bankBill) {
         Bank bank = new Bank();
         bank.setId(Math.toIntExact(bankBill.getBankCardId()));
-
-        return bankMapper.transaction();
+        bank.setCashAmount(bankBill.getTransactionAmount());
+        return bankMapper.transaction(bank);
     }
 
 

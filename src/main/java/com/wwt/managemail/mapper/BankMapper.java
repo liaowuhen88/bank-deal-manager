@@ -9,5 +9,5 @@ import org.apache.ibatis.annotations.Param;
 import java.util.List;
 
 public interface BankMapper extends CommonMapper<Bank> {
-    int transaction();
+    int transaction(Bank bank );
 }

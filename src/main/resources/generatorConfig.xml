@@ -39,6 +39,6 @@
         </javaClientGenerator>-->
 
         <!-- 相关表的配置 -->
-        <table tableName="bank_bill" domainObjectName="BankBill"/>
+        <table tableName="bank" domainObjectName="Bank"/>
     </context>
 </generatorConfiguration>
