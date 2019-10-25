@@ -1,6 +1,8 @@
 package com.wwt.managemail.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Id;
@@ -16,7 +18,8 @@ public class BankBill {
 
     private Long transactionAmount;
     private String transactionType;
-
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date transactionTime;
     private String creator;
 
