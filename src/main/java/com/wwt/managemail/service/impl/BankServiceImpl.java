@@ -1,6 +1,7 @@
 package com.wwt.managemail.service.impl;
 
 import com.wwt.managemail.entity.Bank;
+import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.mapper.BankMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankService;
@@ -20,6 +21,14 @@ public class BankServiceImpl implements BankService {
         bank.setCreator("admin");
         bank.setCreateTime(new Date());
         return bankMapper.insert(bank);
+    }
+
+    @Override
+    public int transaction(BankBill bankBill) {
+        Bank bank = new Bank();
+        bank.setId(Math.toIntExact(bankBill.getBankCardId()));
+
+        return bankMapper.transaction();
     }
 
 

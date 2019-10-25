@@ -1,6 +1,7 @@
 package com.wwt.managemail.service;
 
 import com.wwt.managemail.entity.Bank;
+import com.wwt.managemail.entity.BankBill;
 
 import java.util.List;
 
@@ -11,6 +12,8 @@ public interface BankService {
      * @return
      */
     int insert(Bank bank);
+
+    int transaction(BankBill bankBill);
 
     List<Bank> selectAll();
 }

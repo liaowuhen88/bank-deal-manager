@@ -29,9 +29,9 @@
         </javaModelGenerator>
 
         <!-- *Mapper.xml 文件的位置 -->
-<!--        <sqlMapGenerator targetPackage="mybatis" targetProject="src/main/java">
+      <sqlMapGenerator targetPackage="mappers" targetProject="src/main/resources">
             <property name="enableSubPackages" value="false"/>
-        </sqlMapGenerator>-->
+        </sqlMapGenerator>
 
         <!-- Mapper 接口文件的位置 -->
 <!--        <javaClientGenerator targetPackage="com.example.mapper" targetProject="src/main/java" type="XMLMAPPER">

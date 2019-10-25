@@ -4,6 +4,7 @@ import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.vo.BankBillQuery;
+import com.wwt.managemail.vo.BankBillVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -28,8 +29,8 @@ public class BankBillController {
     }
 
     @PostMapping("query")
-    public Result< List<BankBill>> query(@Validated @RequestBody BankBillQuery bankBillQuery){
-        List<BankBill> list = billService.query(bankBillQuery);
+    public Result< List<BankBillVo>> query(@Validated @RequestBody BankBillQuery bankBillQuery){
+        List<BankBillVo> list = billService.query(bankBillQuery);
         return Result.sucess(list);
     }
 }

@@ -6,6 +6,7 @@ import com.wwt.managemail.mapper.BankBillMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankBillQuery;
+import com.wwt.managemail.vo.BankBillVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +31,14 @@ public class BankBillServiceImpl implements BankBillService {
     @Override
     public int transaction(BankBill bankBill) {
         insert(bankBill);
-
+        bankService.transaction(bankBill);
         return 0;
     }
 
     @Override
-    public List<BankBill> query(BankBillQuery bankBillQuery) {
+    public List<BankBillVo> query(BankBillQuery bankBillQuery) {
         BankBill query = new BankBill();
         query.setBankCardId(bankBillQuery.getBankCardId());
-        return bankBillMapper.selectByExample(query);
+        return bankBillMapper.query();
     }
 }
