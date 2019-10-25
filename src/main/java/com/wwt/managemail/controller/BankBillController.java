@@ -1,12 +1,9 @@
 package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
-import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.service.BankBillService;
-import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankBillQuery;
-import com.wwt.managemail.vo.BankInCome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +19,13 @@ public class BankBillController {
 
     @Autowired
     BankBillService billService;
+
+
+    @PostMapping("transaction")
+    public Result<Integer> transaction(@Validated @RequestBody BankBill bankBill){
+        int code = billService.transaction(bankBill);
+        return Result.sucess(code);
+    }
 
     @PostMapping("query")
     public Result< List<BankBill>> query(@Validated @RequestBody BankBillQuery bankBillQuery){

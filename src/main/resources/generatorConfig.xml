@@ -39,8 +39,6 @@
         </javaClientGenerator>-->
 
         <!-- 相关表的配置 -->
-        <table tableName="bank_bill" domainObjectName="BankBill" enableCountByExample="false"
-               enableDeleteByExample="false" enableSelectByExample="true"
-               enableUpdateByExample="false"/>
+        <table tableName="bank_bill" domainObjectName="BankBill"/>
     </context>
 </generatorConfiguration>
