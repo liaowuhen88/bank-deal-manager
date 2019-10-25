@@ -1,0 +1,31 @@
+package com.wwt.managemail.controller;
+
+import com.wwt.managemail.common.Result;
+import com.wwt.managemail.entity.Bank;
+import com.wwt.managemail.entity.BankBill;
+import com.wwt.managemail.service.BankBillService;
+import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.vo.BankBillQuery;
+import com.wwt.managemail.vo.BankInCome;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("api/bankBill")
+public class BankBillController {
+
+    @Autowired
+    BankBillService billService;
+
+    @PostMapping("query")
+    public Result< List<BankBill>> query(@Validated @RequestBody BankBillQuery bankBillQuery){
+        List<BankBill> list = billService.query(bankBillQuery);
+        return Result.sucess(list);
+    }
+}

@@ -26,4 +26,10 @@ public class Result<T> {
         Result response = new Result(Code.SUCCESS,data);
         return response;
     }
+
+    public static Result error(String msg) {
+        Result response = new Result(Code.SYS_ERR);
+        response.setMsg(msg);
+        return response;
+    }
 }

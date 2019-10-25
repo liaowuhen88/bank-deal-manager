@@ -29,4 +29,7 @@ public class Bank {
 
     private Date updateTime;
 
+    public Long getAccountBalance() {
+        return (cashAmount==null?0:cashAmount)+(investmentAmount==null?0:investmentAmount);
+    }
 }
