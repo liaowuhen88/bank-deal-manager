@@ -1,4 +1,3 @@
-
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
@@ -21,7 +20,9 @@ spring:
       # 数据库连接超时时间,默认30秒，即30000
       connection-timeout: 30000
       connection-test-query: SELECT 1
-
+  jackson:
+    time-zone: Asia/Shanghai
+    date-format: yyyy-MM-dd HH:mm:ss
 mybatis:
   type-aliases-package: com.wwt.managemail.entity
   configuration:
@@ -34,6 +35,7 @@ yuanbo:
   cors:
     allowedOrigins:
       - http://localhost:8080
+      - http://localhost:8087
     allowCredentials: true
     allowedHeaders:
       - "*"
