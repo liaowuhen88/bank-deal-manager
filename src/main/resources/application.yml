@@ -35,7 +35,7 @@ yuanbo:
   cors:
     allowedOrigins:
       - http://localhost:8080
-      - http://localhost:8087
+      - http://localhost:8081
     allowCredentials: true
     allowedHeaders:
       - "*"
