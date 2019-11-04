@@ -15,7 +15,8 @@
 
         <!-- 数据库的相关配置 -->
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
-                        connectionURL="jdbc:mysql://sql.l139.vhostgo.com:3306/liaowuhendgnew?serverTimezone=UTC" userId="liaowuhendgnew"
+                        connectionURL="jdbc:mysql://sql.l118.vhostgo.com:3306/liaowuhendgnew?serverTimezone=UTC"
+                        userId="liaowuhendgnew"
                         password="n5uQe590Lmg7"/>
 
         <javaTypeResolver>
@@ -39,6 +40,6 @@
         </javaClientGenerator>-->
 
         <!-- 相关表的配置 -->
-        <table tableName="bank" domainObjectName="Bank"/>
+        <table tableName="bank_product" domainObjectName="bankProduct"/>
     </context>
 </generatorConfiguration>
