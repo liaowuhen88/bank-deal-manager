@@ -5,6 +5,7 @@ import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 @Table(name = "bank")
 @Data
@@ -16,10 +17,10 @@ public class Bank {
     private String bankName;
     private String bankCard;
 
-    private Long cashAmount;
-    private Long investmentAmount;
+    private BigDecimal cashAmount;
+    private BigDecimal investmentAmount;
 
-    private Long accountBalance;
+    private BigDecimal accountBalance;
 
     private String creator;
 
@@ -29,7 +30,14 @@ public class Bank {
 
     private Date updateTime;
 
-    public Long getAccountBalance() {
-        return (cashAmount==null?0:cashAmount)+(investmentAmount==null?0:investmentAmount);
+    public BigDecimal getAccountBalance() {
+        if (null == cashAmount) {
+            return investmentAmount;
+        }
+        return cashAmount.add(investmentAmount);
+    }
+
+    public String getSelectName() {
+        return getBankName() + "__" + getName() + "__" + getBankCard();
     }
 }

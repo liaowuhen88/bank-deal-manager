@@ -1,10 +1,10 @@
 package com.wwt.managemail.vo;
 
+import com.wwt.managemail.enums.TransactionTypeEnum;
+import com.wwt.managemail.utils.MoneyUtills;
 import lombok.Data;
-import tk.mybatis.mapper.annotation.KeySql;
 
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -12,8 +12,8 @@ public class BankBillVo {
     private Long id;
     private Long bankCardId;
 
-    private Long transactionAmount;
-    private String transactionType;
+    private BigDecimal transactionAmount;
+    private Integer transactionType;
 
     private Date transactionTime;
     private String creator;
@@ -28,4 +28,11 @@ public class BankBillVo {
 
     private String bankCard;
 
+    public String getTransactionTypeMsg() {
+        return TransactionTypeEnum.getByCode(transactionType).getMsg();
     }
+
+    public BigDecimal getRealTransactionAmount() {
+        return MoneyUtills.getRealMoney(transactionType, transactionAmount);
+    }
+}

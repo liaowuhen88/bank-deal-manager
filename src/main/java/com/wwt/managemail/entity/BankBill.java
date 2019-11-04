@@ -7,6 +7,7 @@ import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.math.BigDecimal;
 import java.util.Date;
 @Table(name = "bank_bill")
 @Data
@@ -15,9 +16,10 @@ public class BankBill {
     @KeySql(useGeneratedKeys = true)
     private Long id;
     private Long bankCardId;
+    private Integer transferCard;
 
-    private Long transactionAmount;
-    private String transactionType;
+    private BigDecimal transactionAmount;
+    private Integer transactionType;
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date transactionTime;
