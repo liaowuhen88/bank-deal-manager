@@ -40,6 +40,6 @@
         </javaClientGenerator>-->
 
         <!-- 相关表的配置 -->
-        <table tableName="bank_product" domainObjectName="bankProduct"/>
+        <table tableName="bank_my_product" domainObjectName="BankMyProduct"/>
     </context>
 </generatorConfiguration>
