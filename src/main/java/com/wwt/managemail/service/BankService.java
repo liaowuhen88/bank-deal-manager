@@ -6,6 +6,7 @@ import com.wwt.managemail.entity.BankBill;
 import java.util.List;
 
 public interface BankService {
+    Bank selectById(Integer id);
     /**
      * 保存银行卡信息
      * @param bank

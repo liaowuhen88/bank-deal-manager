@@ -15,7 +15,8 @@ public class BankBill {
     @Id
     @KeySql(useGeneratedKeys = true)
     private Long id;
-    private Long bankCardId;
+    private Integer bankCardId;
+    private Integer myProductId;
     private Integer transferCard;
 
     private BigDecimal transactionAmount;

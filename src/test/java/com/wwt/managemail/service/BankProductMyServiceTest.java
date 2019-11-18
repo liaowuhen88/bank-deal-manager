@@ -6,6 +6,7 @@ import com.wwt.managemail.entity.BankMyProduct;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class BankProductMyServiceTest extends ManagemailApplicationTests {
@@ -16,10 +17,9 @@ public class BankProductMyServiceTest extends ManagemailApplicationTests {
     public void insert() {
         BankMyProduct vo = new BankMyProduct();
         vo.setBankCardId(2);
-        vo.setBankProductId(1);
         vo.setBuyingTime(new Date());
-        vo.setInvestmentAmount(10000L);
-        vo.setInterestRate(12L);
+        vo.setInvestmentAmount(new BigDecimal(100.98));
+        vo.setInterestRate(new BigDecimal(12));
         vo.setProfitDate(new Date());
         //vo.setTotalEffectiveUnterestIncome(10900L);
         vo.setDueTime(new Date());

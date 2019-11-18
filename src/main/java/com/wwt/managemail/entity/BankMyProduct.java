@@ -6,29 +6,35 @@ import org.springframework.format.annotation.DateTimeFormat;
 import tk.mybatis.mapper.annotation.KeySql;
 
 import javax.persistence.Id;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
 public class BankMyProduct {
     @Id
     @KeySql(useGeneratedKeys = true)
-    private Long id;
+    private Integer id;
     /**
      * 银行账户
      */
     private Integer bankCardId;
     /**
-     * 产品号
-     */
-    private Integer bankProductId;
-    /**
      * 投资金额
      */
-    private Long investmentAmount;
+    private BigDecimal investmentAmount;
     /**
      * 实际利率
      */
-    private Long interestRate;
+    private BigDecimal interestRate;
+    /**
+     * 利息预期收益(月)
+     */
+    private BigDecimal expectedInterestIncomeMonth;
+    /**
+     * 本息收益
+     */
+    private BigDecimal principalAndInterestIncome;
+
     /**
      * 收利日期
      */
@@ -41,7 +47,10 @@ public class BankMyProduct {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date depositPeriod;
-    //private Long totalEffectiveUnterestIncome;
+    /**
+     * 实际利息总收益
+     */
+    private BigDecimal totalEffectiveInterestIncome;
     /**
      * buyingTime
      */
@@ -54,6 +63,26 @@ public class BankMyProduct {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dueTime;
+    /**
+     * 产品类型
+     */
+    private String productType;
+    /**
+     * 预期利率
+     */
+    private BigDecimal expectedInterestRate;
+    /**
+     * 利息预期收益
+     */
+    private BigDecimal expectedInterestIncomeTotal;
+    /**
+     * 付息方式
+     */
+    private String interestPaymentMethod;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date interestStartTime;
     private String creator;
     private Date createTime;
     private String remark;

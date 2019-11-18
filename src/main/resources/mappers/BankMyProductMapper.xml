@@ -1,4 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wwt.managemail.mapper.BankMyProductMapper">
+    <update id="income" parameterType="com.wwt.managemail.entity.BankMyProduct">
+        update bank_my_product
+        <set>
+            <if test="totalEffectiveInterestIncome != null">
+                `total_effective_interest_income` = total_effective_interest_income +
+                #{totalEffectiveInterestIncome,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+
+    </update>
 </mapper>

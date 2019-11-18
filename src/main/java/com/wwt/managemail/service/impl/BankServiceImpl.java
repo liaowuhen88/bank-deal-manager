@@ -18,7 +18,13 @@ public class BankServiceImpl implements BankService {
     private BankMapper bankMapper;
 
     @Override
+    public Bank selectById(Integer id) {
+        return bankMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public int insert(Bank bank) {
+
         bank.setCreator("admin");
         bank.setCreateTime(new Date());
         return bankMapper.insert(bank);

@@ -6,6 +6,7 @@ public enum TransactionTypeEnum {
     transfer(3, "转账"),
     cashInterestIncome(4, "活期利息收入"),
     investment(5, "买入理财"),
+    investmentIncome(6, "理财利息收入"),
     ;
     private int code;
 

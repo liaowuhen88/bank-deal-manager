@@ -2,8 +2,8 @@ package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
+import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.entity.BankMyProduct;
-import com.wwt.managemail.entity.BankProduct;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
@@ -31,9 +31,21 @@ public class BankMyProductController extends BaseController {
     @Autowired
     BankProductService bankProductService;
 
-    @PostMapping("insert")
-    public Result<Integer> insert(@RequestBody BankMyProduct bankMyProduct) {
-        int code = bankMyProductService.insert(bankMyProduct);
+    @PostMapping("buy")
+    public Result<Integer> buy(@RequestBody BankMyProduct bankMyProduct) {
+        int code = bankMyProductService.buy(bankMyProduct);
+        return Result.sucess(code);
+    }
+
+    /**
+     * 利息收入
+     *
+     * @param bankBill
+     * @return
+     */
+    @PostMapping("income")
+    public Result<Integer> income(@RequestBody BankBill bankBill) {
+        int code = bankMyProductService.income(bankBill);
         return Result.sucess(code);
     }
 
@@ -48,17 +60,10 @@ public class BankMyProductController extends BaseController {
                 .collect(Collectors.toMap(Bank::getId,
                         paramVO -> paramVO));
 
-        // 产品
-        List<BankProduct> bankProducts = bankProductService.selectAll();
-        // 主键关系
-        Map<Integer, BankProduct> bankProductIds = bankProducts.stream()
-                .collect(Collectors.toMap(BankProduct::getId,
-                        paramVO -> paramVO));
         for (BankMyProduct bankMyProduct : list) {
             BankMyProductVo vo = new BankMyProductVo();
             BeanUtils.copyProperties(bankMyProduct, vo);
             vo.setBank(bankIds.get(bankMyProduct.getBankCardId()));
-            vo.setBankProduct(bankProductIds.get(bankMyProduct.getBankProductId()));
             res.add(vo);
         }
         return Result.sucess(res);
