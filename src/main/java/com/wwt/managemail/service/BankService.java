@@ -12,7 +12,7 @@ public interface BankService {
      * @param bank
      * @return
      */
-    int insert(Bank bank);
+    int insertSelective(Bank bank);
 
     int transaction(BankBill bankBill);
 

@@ -24,11 +24,11 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public int insert(Bank bank) {
+    public int insertSelective(Bank bank) {
 
         bank.setCreator("admin");
         bank.setCreateTime(new Date());
-        return bankMapper.insert(bank);
+        return bankMapper.insertSelective(bank);
     }
 
     @Override

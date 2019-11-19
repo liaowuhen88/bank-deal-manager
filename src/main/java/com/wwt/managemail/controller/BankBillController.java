@@ -21,7 +21,6 @@ public class BankBillController {
     @Autowired
     BankBillService billService;
 
-
     @PostMapping("transaction")
     public Result<Integer> transaction(@Validated @RequestBody BankBill bankBill){
         int code = billService.transaction(bankBill);

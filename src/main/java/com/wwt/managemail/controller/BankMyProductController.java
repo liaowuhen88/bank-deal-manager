@@ -2,12 +2,12 @@ package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
-import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankMyProductVo;
+import com.wwt.managemail.vo.ProductIncome;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -40,12 +40,12 @@ public class BankMyProductController extends BaseController {
     /**
      * 利息收入
      *
-     * @param bankBill
+     * @param productIncome
      * @return
      */
     @PostMapping("income")
-    public Result<Integer> income(@RequestBody BankBill bankBill) {
-        int code = bankMyProductService.income(bankBill);
+    public Result<Integer> income(@RequestBody ProductIncome productIncome) {
+        int code = bankMyProductService.income(productIncome);
         return Result.sucess(code);
     }
 

@@ -27,7 +27,7 @@ public class BankProductMyServiceTest extends ManagemailApplicationTests {
         vo.setCreateTime(new Date());
         vo.setRemark("re,mark");
         logger.info(JSON.toJSONString(vo));
-        int list = bankMyProductService.insert(vo);
+        int list = bankMyProductService.insertSelective(vo);
         logger.info("*********************" + list);
 
     }

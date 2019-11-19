@@ -8,6 +8,9 @@
                 `total_effective_interest_income` = total_effective_interest_income +
                 #{totalEffectiveInterestIncome,jdbcType=VARCHAR},
             </if>
+            <if test="profitDate != null">
+                `profit_date` = #{profitDate,jdbcType=VARCHAR},
+            </if>
         </set>
         where id = #{id,jdbcType=INTEGER}
 

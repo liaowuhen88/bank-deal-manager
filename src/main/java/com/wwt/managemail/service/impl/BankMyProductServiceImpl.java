@@ -8,6 +8,7 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.vo.ProductIncome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,8 +25,8 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     private BankBillService bankBillService;
 
     @Override
-    public int insert(BankMyProduct bankMyProduct) {
-        return bankMyProductMapper.insert(bankMyProduct);
+    public int insertSelective(BankMyProduct bankMyProduct) {
+        return bankMyProductMapper.insertSelective(bankMyProduct);
     }
 
     @Override
@@ -42,20 +43,21 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankBill.setTransactionTime(bankMyProduct.getBuyingTime());
         bankBill.setRemark(bankMyProduct.getRemark());
         bankService.transaction(bankBill);
-        bankBillService.insert(bankBill);
+        bankBillService.insertSelective(bankBill);
 
-        return insert(bankMyProduct);
+        return insertSelective(bankMyProduct);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int income(BankBill bankBill) {
+    public int income(ProductIncome bankBill) {
         BankMyProduct bankMyProduct = new BankMyProduct();
         bankMyProduct.setId(bankBill.getMyProductId());
         bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
+        bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
         bankMyProductMapper.income(bankMyProduct);
         bankService.transaction(bankBill);
-        bankBillService.insert(bankBill);
+        bankBillService.insertSelective(bankBill);
         return 0;
     }
 

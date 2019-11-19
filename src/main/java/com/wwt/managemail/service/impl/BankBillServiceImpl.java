@@ -24,16 +24,16 @@ public class BankBillServiceImpl implements BankBillService {
     private BankService bankService;
 
     @Override
-    public int insert(BankBill bankBill) {
+    public int insertSelective(BankBill bankBill) {
         bankBill.setCreator("admin");
         bankBill.setCreateTime(new Date());
-        return bankBillMapper.insert(bankBill);
+        return bankBillMapper.insertSelective(bankBill);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int transaction(BankBill bankBill) {
-        insert(bankBill);
+        insertSelective(bankBill);
         bankService.transaction(bankBill);
         //如果是转账,需要给转帐方增加记录
         if (TransactionTypeEnum.transfer_out.getCode() == bankBill.getTransactionType()) {
@@ -44,7 +44,7 @@ public class BankBillServiceImpl implements BankBillService {
             bill.setBankCardId(bankBill.getTransferCard());
             bill.setId(null);
             bill.setTransferCard(bankCardId);
-            insert(bill);
+            insertSelective(bill);
             bankService.transaction(bill);
         }
         return 0;

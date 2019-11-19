@@ -33,7 +33,7 @@ public class BankController extends BaseController{
 
     @PostMapping("insert")
     public Result<Integer> insert(@RequestBody Bank bank) {
-        int code = bankService.insert(bank);
+        int code = bankService.insertSelective(bank);
         return Result.sucess(code);
     }
 

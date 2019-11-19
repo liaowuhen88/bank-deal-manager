@@ -15,7 +15,7 @@ public class BankServiceTest extends ManagemailApplicationTests {
         vo.setName("name");
         vo.setBankName("bankName");
         vo.setBankCard("bankCard");
-        int list = bankService.insert(vo);
+        int list = bankService.insertSelective(vo);
         logger.info("*********************" + list);
 
     }
