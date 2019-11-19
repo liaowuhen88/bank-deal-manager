@@ -39,6 +39,8 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankBill.setBankCardId(bankMyProduct.getBankCardId());
         bankBill.setTransactionAmount(bankMyProduct.getInvestmentAmount());
         bankBill.setTransactionType(TransactionTypeEnum.investment.getCode());
+        bankBill.setTransactionTime(bankMyProduct.getBuyingTime());
+        bankBill.setRemark(bankMyProduct.getRemark());
         bankService.transaction(bankBill);
         bankBillService.insert(bankBill);
 
