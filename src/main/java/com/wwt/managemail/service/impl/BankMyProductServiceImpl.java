@@ -10,6 +10,7 @@ import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -44,6 +45,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int income(BankBill bankBill) {
         BankMyProduct bankMyProduct = new BankMyProduct();
         bankMyProduct.setId(bankBill.getMyProductId());
