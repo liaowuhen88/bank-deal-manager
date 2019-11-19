@@ -29,6 +29,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int buy(BankMyProduct bankMyProduct) {
         Bank bank = bankService.selectById(bankMyProduct.getBankCardId());
         if (bank.getCashAmount().compareTo(bankMyProduct.getInvestmentAmount()) == -1) {

@@ -2,6 +2,7 @@ package com.wwt.managemail.service.impl;
 
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
+import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.mapper.BankMapper;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.MoneyUtills;
@@ -37,6 +38,9 @@ public class BankServiceImpl implements BankService {
         // 支出等需要取负数
         BigDecimal realMoney = MoneyUtills.getRealMoney(bankBill.getTransactionType(), bankBill.getTransactionAmount());
         bank.setCashAmount(realMoney);
+        if (TransactionTypeEnum.investment.getCode() == bankBill.getTransactionType()) {
+            bank.setInvestmentAmount(bankBill.getTransactionAmount());
+        }
         return bankMapper.transaction(bank);
     }
 

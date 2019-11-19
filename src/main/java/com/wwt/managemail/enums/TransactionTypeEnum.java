@@ -3,7 +3,8 @@ package com.wwt.managemail.enums;
 public enum TransactionTypeEnum {
     income(1, "转入"),
     pay(2, "支出"),
-    transfer(3, "转账"),
+    transfer_in(7, "转账-转入"),
+    transfer_out(3, "转账-转出"),
     cashInterestIncome(4, "活期利息收入"),
     investment(5, "买入理财"),
     investmentIncome(6, "理财利息收入"),
