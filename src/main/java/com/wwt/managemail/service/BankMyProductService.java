@@ -1,6 +1,7 @@
 package com.wwt.managemail.service;
 
 import com.wwt.managemail.entity.BankMyProduct;
+import com.wwt.managemail.vo.BankMyProductQueryVO;
 import com.wwt.managemail.vo.ProductIncome;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface BankMyProductService {
     int income(ProductIncome productIncome);
 
     List<BankMyProduct> selectAll();
+
+    List<BankMyProduct> select(BankMyProductQueryVO bankMyProductQueryVO);
 }

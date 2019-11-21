@@ -6,6 +6,7 @@ import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.vo.BankMyProductQueryVO;
 import com.wwt.managemail.vo.BankMyProductVo;
 import com.wwt.managemail.vo.ProductIncome;
 import org.springframework.beans.BeanUtils;
@@ -49,9 +50,9 @@ public class BankMyProductController extends BaseController {
         return Result.sucess(code);
     }
 
-    @PostMapping("selectAll")
-    public Result<List<BankMyProductVo>> selectAll() {
-        List<BankMyProduct> list = bankMyProductService.selectAll();
+    @PostMapping("select")
+    public Result<List<BankMyProductVo>> select(@RequestBody BankMyProductQueryVO bankMyProductQueryVO) {
+        List<BankMyProduct> list = bankMyProductService.select(bankMyProductQueryVO);
         List<BankMyProductVo> res = new ArrayList<>(list.size());
 
         List<Bank> banks = bankService.selectAll();

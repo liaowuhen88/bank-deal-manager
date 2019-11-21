@@ -8,6 +8,7 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.vo.BankMyProductQueryVO;
 import com.wwt.managemail.vo.ProductIncome;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,5 +65,10 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     @Override
     public List<BankMyProduct> selectAll() {
         return bankMyProductMapper.selectAll();
+    }
+
+    @Override
+    public List<BankMyProduct> select(BankMyProductQueryVO bankMyProductQueryVO) {
+        return bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
     }
 }
