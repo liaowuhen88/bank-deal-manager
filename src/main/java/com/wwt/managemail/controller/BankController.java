@@ -3,18 +3,18 @@ package com.wwt.managemail.controller;
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.vo.BankQueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @RequestMapping("api/banks")
-public class BankController extends BaseController{
+public class BankController extends BaseController {
 
     @Autowired
     BankService bankService;
@@ -38,8 +38,31 @@ public class BankController extends BaseController{
     }
 
     @PostMapping("selectAll")
-    public Result<List<Bank>> selectAll(){
-        List<Bank>  list = bankService.selectAll();
+    public Result<List<Bank>> selectAll() {
+        List<Bank> list = bankService.selectAll();
         return Result.sucess(list);
+    }
+
+    @PostMapping("select")
+    public Result<List<Bank>> select(@RequestBody BankQueryVO bankQueryVO) {
+        List<Bank> list = bankService.select(bankQueryVO);
+        return Result.sucess(list);
+    }
+
+    @PostMapping("selectUserNamesAndBankNames")
+    public Result<Map<String, Set<String>>> selectUserNamesAndBankNames() {
+        Map<String, Set<String>> map = new HashMap();
+        Set<String> userNames = new HashSet<>();
+        Set<String> bankNames = new HashSet<>();
+        map.put("userNames", userNames);
+        map.put("bankNames", bankNames);
+        List<Bank> list = bankService.selectAll();
+        if (null != list && list.size() > 0) {
+            for (Bank bank : list) {
+                userNames.add(bank.getName());
+                bankNames.add(bank.getBankName());
+            }
+        }
+        return Result.sucess(map);
     }
 }

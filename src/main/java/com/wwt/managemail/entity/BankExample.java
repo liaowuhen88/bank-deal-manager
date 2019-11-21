@@ -75,7 +75,7 @@ public class BankExample {
      *
      * @mbg.generated
      */
-    public boolean isDistinct() {
+    public boolean getDistinct() {
         return distinct;
     }
 

@@ -6,6 +6,8 @@ import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.mapper.BankMapper;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.MoneyUtills;
+import com.wwt.managemail.vo.BankQueryVO;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -48,5 +50,17 @@ public class BankServiceImpl implements BankService {
     @Override
     public List<Bank> selectAll() {
         return  bankMapper.selectAll();
+    }
+
+    @Override
+    public List<Bank> select(BankQueryVO bankQueryVO) {
+        Bank bank = new Bank();
+        if (StringUtils.isNotEmpty(bankQueryVO.getUserName())) {
+            bank.setName(bankQueryVO.getUserName());
+        }
+        if (StringUtils.isNotEmpty(bankQueryVO.getBankName())) {
+            bank.setBankName(bankQueryVO.getBankName());
+        }
+        return bankMapper.select(bank);
     }
 }

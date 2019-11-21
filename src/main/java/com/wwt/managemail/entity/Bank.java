@@ -20,13 +20,13 @@ public class Bank {
     /**
      * 现金金额
      */
-    private BigDecimal cashAmount = new BigDecimal(0);
+    private BigDecimal cashAmount;
     /**
      * 投资金额
      */
-    private BigDecimal investmentAmount = new BigDecimal(0);
+    private BigDecimal investmentAmount;
 
-    private BigDecimal accountBalance = new BigDecimal(0);
+    private BigDecimal accountBalance;
 
     private String creator;
 
