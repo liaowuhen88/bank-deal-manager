@@ -15,5 +15,8 @@
 
   </select>
 
+  <select id="selectTotal" resultType="com.wwt.managemail.vo.PageHomeVo">
+    select sum(cash_amount) cash_amount,sum(investment_amount) investment_amount from bank
+  </select>
 
 </mapper>
