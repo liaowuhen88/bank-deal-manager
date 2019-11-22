@@ -54,13 +54,16 @@ public class BankController extends BaseController {
         Map<String, Set<String>> map = new HashMap();
         Set<String> userNames = new HashSet<>();
         Set<String> bankNames = new HashSet<>();
+        Set<String> bankCards = new HashSet<>();
         map.put("userNames", userNames);
         map.put("bankNames", bankNames);
+        map.put("bankCards", bankCards);
         List<Bank> list = bankService.selectAll();
         if (null != list && list.size() > 0) {
             for (Bank bank : list) {
                 userNames.add(bank.getName());
                 bankNames.add(bank.getBankName());
+                bankCards.add(bank.getBankCard());
             }
         }
         return Result.sucess(map);

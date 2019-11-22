@@ -5,5 +5,7 @@ import lombok.Data;
 @Data
 public class BankBillQuery {
     private Integer bankCardId;
-    private String transactionType;
+    private int[] transactionTypes;
+    private String startTime;
+    private String endTime;
 }

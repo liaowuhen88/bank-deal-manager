@@ -52,8 +52,6 @@ public class BankBillServiceImpl implements BankBillService {
 
     @Override
     public List<BankBillVo> query(BankBillQuery bankBillQuery) {
-        BankBill query = new BankBill();
-        query.setBankCardId(bankBillQuery.getBankCardId());
-        return bankBillMapper.query();
+        return bankBillMapper.query(bankBillQuery);
     }
 }

@@ -1,8 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wwt.managemail.mapper.BankBillMapper">
-  <select id="query"  resultType="com.wwt.managemail.vo.BankBillVo">
-    select * from bank_bill left join bank on bank.id = bank_bill.bank_card_id order by bank_bill.id desc
+  <select id="query" parameterType="com.wwt.managemail.vo.BankBillQuery" resultType="com.wwt.managemail.vo.BankBillVo">
+    select * from bank_bill left join bank on bank.id = bank_bill.bank_card_id
+    where 1 = 1
+    <if test="transactionTypes != null">
+      and bank_bill.transaction_type in
+      <foreach collection="transactionTypes" index="index" item="item" open="("
+               separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    order by bank_bill.id desc
 
   </select>
 </mapper>
