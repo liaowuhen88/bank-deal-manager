@@ -35,7 +35,7 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public int transaction(BankBill bankBill) {
+    public Integer transaction(BankBill bankBill) {
         Bank bank = new Bank();
         bank.setId(Math.toIntExact(bankBill.getBankCardId()));
         // 支出等需要取负数

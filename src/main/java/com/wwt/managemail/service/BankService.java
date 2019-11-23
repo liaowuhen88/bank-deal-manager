@@ -16,7 +16,7 @@ public interface BankService {
      */
     int insertSelective(Bank bank);
 
-    int transaction(BankBill bankBill);
+    Integer transaction(BankBill bankBill);
 
     List<Bank> selectAll();
 

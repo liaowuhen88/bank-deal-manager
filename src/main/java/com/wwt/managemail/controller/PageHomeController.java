@@ -1,11 +1,11 @@
 package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
-import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankBillTotalVo;
+import com.wwt.managemail.vo.BankMyProductVo;
 import com.wwt.managemail.vo.BankTotalVo;
 import com.wwt.managemail.vo.PageHomeVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +35,12 @@ public class PageHomeController {
         List<BankBillTotalVo> list = bankBillService.queryCurrentYearTotal();
         Map<Integer, BankBillTotalVo> map = list.stream().collect(Collectors.toMap(BankBillTotalVo::getTransactionType, account -> account));
 
-        List<BankMyProduct> expireProduct = bankMyProductService.expireProduct();
+        List<BankMyProductVo> expireProduct = bankMyProductService.expireProduct();
+        List<BankMyProductVo> expireInterest = bankMyProductService.expireInterest();
         pageHomeVo.setIntegerBankBillTotalVoMap(map);
         pageHomeVo.setBankTotalVo(bankTotalVo);
         pageHomeVo.setExpireProduct(expireProduct);
+        pageHomeVo.setExpireInterest(expireInterest);
         return Result.sucess(pageHomeVo);
     }
 }

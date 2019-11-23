@@ -26,10 +26,12 @@
         <if test="userName != null and userName != ''">
             and bank.name = #{userName,jdbcType=VARCHAR}
         </if>
-        <if test="expireTime != null">
-            and bank_my_product.due_time &lt;= #{expireTime,jdbcType=DATE}
+        <if test="expireProductTime != null">
+            and bank_my_product.due_time &lt;= #{expireProductTime,jdbcType=DATE}
         </if>
-
+        <if test="expireInterestTime != null">
+            and bank_my_product.profit_date &lt;= #{expireInterestTime,jdbcType=DATE}
+        </if>
 
     </select>
 

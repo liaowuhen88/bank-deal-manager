@@ -9,13 +9,18 @@ import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankMyProductQueryVO;
+import com.wwt.managemail.vo.BankMyProductVo;
 import com.wwt.managemail.vo.ProductIncome;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BankMyProductServiceImpl implements BankMyProductService {
@@ -69,14 +74,45 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
-    public List<BankMyProduct> select(BankMyProductQueryVO bankMyProductQueryVO) {
-        return bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
+    public List<BankMyProductVo> select(BankMyProductQueryVO bankMyProductQueryVO) {
+        List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
+        return getBankMyProductVos(list);
     }
 
     @Override
-    public List<BankMyProduct> expireProduct() {
+    public List<BankMyProductVo> expireProduct() {
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setExpireTime(new Date());
-        return bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
+        bankMyProductQueryVO.setExpireProductTime(new Date());
+        List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
+        return getBankMyProductVos(list);
+    }
+
+    @Override
+    public List<BankMyProductVo> expireInterest() {
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setExpireInterestTime(new Date());
+        List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
+        return getBankMyProductVos(list);
+    }
+
+    List<BankMyProductVo> getBankMyProductVos(List<BankMyProduct> list) {
+        if (null != list) {
+            List<BankMyProductVo> res = new ArrayList<>(list.size());
+
+            List<Bank> banks = bankService.selectAll();
+            // 主键关系
+            Map<Integer, Bank> bankIds = banks.stream()
+                    .collect(Collectors.toMap(Bank::getId,
+                            paramVO -> paramVO));
+
+            for (BankMyProduct bankMyProduct : list) {
+                BankMyProductVo vo = new BankMyProductVo();
+                BeanUtils.copyProperties(bankMyProduct, vo);
+                vo.setBank(bankIds.get(bankMyProduct.getBankCardId()));
+                res.add(vo);
+            }
+            return res;
+        }
+        return null;
     }
 }

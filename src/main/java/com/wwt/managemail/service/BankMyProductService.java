@@ -2,6 +2,7 @@ package com.wwt.managemail.service;
 
 import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.vo.BankMyProductQueryVO;
+import com.wwt.managemail.vo.BankMyProductVo;
 import com.wwt.managemail.vo.ProductIncome;
 
 import java.util.List;
@@ -21,7 +22,14 @@ public interface BankMyProductService {
 
     List<BankMyProduct> selectAll();
 
-    List<BankMyProduct> select(BankMyProductQueryVO bankMyProductQueryVO);
+    List<BankMyProductVo> select(BankMyProductQueryVO bankMyProductQueryVO);
 
-    List<BankMyProduct> expireProduct();
+    List<BankMyProductVo> expireProduct();
+
+    /**
+     * 到期利息
+     *
+     * @return
+     */
+    List<BankMyProductVo> expireInterest();
 }
