@@ -2,6 +2,7 @@ package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
+import com.wwt.managemail.mapper.BankNameMapper;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankQueryVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ public class BankController extends BaseController {
 
     @Autowired
     BankService bankService;
+    @Autowired
+    BankNameMapper bankNameMapper;
 
     @PostMapping("getBankName")
     public Result<String> getBankName() {
@@ -28,7 +31,7 @@ public class BankController extends BaseController {
         list.add("天津银行");
         list.add("工商银行");
         list.add("中信银行");
-        return Result.sucess(list);
+        return Result.sucess(bankNameMapper.selectAll());
     }
 
     @PostMapping("insert")
