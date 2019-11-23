@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -69,6 +70,13 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
     @Override
     public List<BankMyProduct> select(BankMyProductQueryVO bankMyProductQueryVO) {
+        return bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
+    }
+
+    @Override
+    public List<BankMyProduct> expireProduct() {
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setExpireTime(new Date());
         return bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
     }
 }

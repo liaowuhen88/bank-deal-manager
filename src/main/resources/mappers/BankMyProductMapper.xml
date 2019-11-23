@@ -26,6 +26,11 @@
         <if test="userName != null and userName != ''">
             and bank.name = #{userName,jdbcType=VARCHAR}
         </if>
+        <if test="expireTime != null">
+            and bank_my_product.due_time &lt;= #{expireTime,jdbcType=DATE}
+        </if>
+
+
     </select>
 
 </mapper>

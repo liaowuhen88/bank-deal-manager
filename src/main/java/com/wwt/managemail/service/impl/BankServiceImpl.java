@@ -7,7 +7,7 @@ import com.wwt.managemail.mapper.BankMapper;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.MoneyUtills;
 import com.wwt.managemail.vo.BankQueryVO;
-import com.wwt.managemail.vo.PageHomeVo;
+import com.wwt.managemail.vo.BankTotalVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +66,7 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public PageHomeVo selectTotal() {
+    public BankTotalVo selectTotal() {
         return bankMapper.selectTotal();
     }
 }

@@ -3,7 +3,7 @@ package com.wwt.managemail.service;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.vo.BankQueryVO;
-import com.wwt.managemail.vo.PageHomeVo;
+import com.wwt.managemail.vo.BankTotalVo;
 
 import java.util.List;
 
@@ -22,6 +22,6 @@ public interface BankService {
 
     List<Bank> select(BankQueryVO bankQueryVO);
 
-    PageHomeVo selectTotal();
+    BankTotalVo selectTotal();
 
 }

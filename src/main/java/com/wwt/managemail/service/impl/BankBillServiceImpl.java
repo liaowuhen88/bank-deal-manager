@@ -5,7 +5,9 @@ import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.mapper.BankBillMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.BankBillQuery;
+import com.wwt.managemail.vo.BankBillTotalVo;
 import com.wwt.managemail.vo.BankBillVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,5 +55,13 @@ public class BankBillServiceImpl implements BankBillService {
     @Override
     public List<BankBillVo> query(BankBillQuery bankBillQuery) {
         return bankBillMapper.query(bankBillQuery);
+    }
+
+    @Override
+    public List<BankBillTotalVo> queryCurrentYearTotal() {
+        BankBillQuery bankBillQuery = new BankBillQuery();
+        bankBillQuery.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+        bankBillQuery.setEndTime(new Date());
+        return bankBillMapper.queryTotal(bankBillQuery);
     }
 }

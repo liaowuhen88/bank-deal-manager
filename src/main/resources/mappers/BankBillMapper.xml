@@ -14,4 +14,27 @@
     order by bank_bill.id desc
 
   </select>
+
+  <select id="queryTotal" parameterType="com.wwt.managemail.vo.BankBillQuery"
+          resultType="com.wwt.managemail.vo.BankBillTotalVo">
+    select sum(transaction_amount) total_transaction_amount,transaction_type from bank_bill
+    where 1 = 1
+    <if test="startTime != null">
+      and transaction_time &gt;= #{startTime,jdbcType=DATE}
+    </if>
+    <if test="endTime != null">
+      and transaction_time &lt;= #{endTime,jdbcType=DATE}
+    </if>
+    <if test="transactionTypes != null">
+      and bank_bill.transaction_type in
+      <foreach collection="transactionTypes" index="index" item="item" open="("
+               separator="," close=")">
+        #{item}
+      </foreach>
+    </if>
+    group by transaction_type
+
+  </select>
+
+
 </mapper>

@@ -22,4 +22,6 @@ public interface BankMyProductService {
     List<BankMyProduct> selectAll();
 
     List<BankMyProduct> select(BankMyProductQueryVO bankMyProductQueryVO);
+
+    List<BankMyProduct> expireProduct();
 }

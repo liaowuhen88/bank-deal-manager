@@ -1,21 +1,15 @@
 package com.wwt.managemail.vo;
 
+import com.wwt.managemail.entity.BankMyProduct;
 import lombok.Data;
 
-import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Data
 public class PageHomeVo {
-    /**
-     * 现金金额
-     */
-    private BigDecimal cashAmount;
-    /**
-     * 投资金额
-     */
-    private BigDecimal investmentAmount;
-
-    private BigDecimal accountBalance;
-
+    BankTotalVo bankTotalVo;
+    Map<Integer, BankBillTotalVo> integerBankBillTotalVoMap;
+    List<BankMyProduct> expireProduct;
 
 }
