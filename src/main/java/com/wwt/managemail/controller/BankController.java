@@ -24,13 +24,6 @@ public class BankController extends BaseController {
 
     @PostMapping("getBankName")
     public Result<String> getBankName() {
-        List<String> list = new ArrayList<>();
-        list.add("招商银行");
-        list.add("交通银行");
-        list.add("建设银行");
-        list.add("天津银行");
-        list.add("工商银行");
-        list.add("中信银行");
         return Result.sucess(bankNameMapper.selectAll());
     }
 
