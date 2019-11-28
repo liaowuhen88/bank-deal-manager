@@ -75,32 +75,33 @@ public class BankBillServiceImpl implements BankBillService {
         StackedLineChart stackedLineChart = new StackedLineChart();
         // 生成横轴数据
         List<String> times = TimeUtils.getMonthBetween(bankBillQuery.getStartTime(), bankBillQuery.getEndTime());
-        Map<Integer, Serie> mapSeries = initSeries(times);
+        List<Serie> mapSeries = initSeries(times);
+        Legend legend = initLegend(mapSeries);
+
         XAxis xAxis = new XAxis();
         xAxis.setData(times);
         stackedLineChart.setXAxis(xAxis);
-        stackedLineChart.setSeries(new ArrayList<>(mapSeries.values()));
+        stackedLineChart.setSeries(mapSeries);
+        stackedLineChart.setLegend(legend);
 
         List<BankBillTotalVo> list = bankBillMapper.totalByMonth(bankBillQuery);
         logger.info(JSON.toJSONString(list));
         Map<Integer, Map<String, BankBillTotalVo>> map = getBankBillTotalVoMap(list);
         logger.info(JSON.toJSONString(map));
         if (null != mapSeries) {
-            Iterator<Map.Entry<Integer, Serie>> iterator = mapSeries.entrySet().iterator();
+            Iterator<Serie> iterator = mapSeries.iterator();
             while (iterator.hasNext()) {
-                Map.Entry<Integer, Serie> entry = iterator.next();
-                Integer key = entry.getKey();
-                Map<String, BankBillTotalVo> bankBillTotalVoMap = map.get(key);
-                Serie serie = entry.getValue();
+                Serie serie = iterator.next();
+                Map<String, BankBillTotalVo> bankBillTotalVoMap = map.get(serie.getKey());
                 List<String> date = serie.getData();
 
                 for (String time : times) {
                     if (null == bankBillTotalVoMap) {
-                        date.add("");
+                        date.add("0");
                     } else {
                         BankBillTotalVo bankBillTotalVo = bankBillTotalVoMap.get(time);
                         if (null == bankBillTotalVo) {
-                            date.add("");
+                            date.add("0");
                         } else {
                             date.add(bankBillTotalVo.getTotalTransactionAmount().toString());
                         }
@@ -113,24 +114,37 @@ public class BankBillServiceImpl implements BankBillService {
         return null;
     }
 
-    public Map<Integer, Serie> initSeries(List<String> times) {
-        Map<Integer, Serie> map = new HashMap<>();
+    public List<Serie> initSeries(List<String> times) {
+        List<Serie> list = new ArrayList<>();
 
         List<String> investmentIncomeData = new ArrayList<>(times.size());
         Serie investmentIncome = new Serie();
         investmentIncome.setName(TransactionTypeEnum.investmentIncome.getMsg());
         investmentIncome.setData(investmentIncomeData);
-        map.put(TransactionTypeEnum.investmentIncome.getCode(), investmentIncome);
+        investmentIncome.setKey(TransactionTypeEnum.investmentIncome.getCode());
+        list.add(investmentIncome);
 
         Serie pay = new Serie();
         List<String> payData = new ArrayList<>(times.size());
         pay.setName(TransactionTypeEnum.pay.getMsg());
+        pay.setKey(TransactionTypeEnum.pay.getCode());
         pay.setData(payData);
-        map.put(TransactionTypeEnum.pay.getCode(), pay);
-
-        return map;
+        list.add(pay);
+        return list;
 
     }
+
+    public Legend initLegend(List<Serie> series) {
+        Legend legend = new Legend();
+        List<String> list = new ArrayList<>();
+        legend.setData(list);
+        for (Serie serie : series) {
+            list.add(serie.getName());
+        }
+        return legend;
+
+    }
+
 
 
     public Map<Integer, Map<String, BankBillTotalVo>> getBankBillTotalVoMap(List<BankBillTotalVo> list) {

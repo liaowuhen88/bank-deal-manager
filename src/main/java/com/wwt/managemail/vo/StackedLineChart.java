@@ -8,4 +8,5 @@ import java.util.List;
 public class StackedLineChart {
     private XAxis xAxis;
     private List<Serie> series;
+    private Legend legend;
 }
