@@ -5,6 +5,7 @@ import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.vo.BankBillQuery;
 import com.wwt.managemail.vo.BankBillVo;
+import com.wwt.managemail.vo.StackedLineChart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,12 @@ public class BankBillController {
     @PostMapping("query")
     public Result< List<BankBillVo>> query(@Validated @RequestBody BankBillQuery bankBillQuery){
         List<BankBillVo> list = billService.query(bankBillQuery);
+        return Result.sucess(list);
+    }
+
+    @PostMapping("totalByMonth")
+    public Result<StackedLineChart> totalByMonth(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
+        StackedLineChart list = billService.totalByMonth(bankBillQuery);
         return Result.sucess(list);
     }
 }

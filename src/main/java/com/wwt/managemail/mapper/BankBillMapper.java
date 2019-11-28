@@ -17,4 +17,7 @@ public interface BankBillMapper extends CommonMapper<BankBill> {
      */
 
     List<BankBillTotalVo> queryTotal(BankBillQuery bankBillQuery);
+
+    List<BankBillTotalVo> totalByMonth(BankBillQuery bankBillQuery);
+
 }

@@ -4,6 +4,7 @@ import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.vo.BankBillQuery;
 import com.wwt.managemail.vo.BankBillTotalVo;
 import com.wwt.managemail.vo.BankBillVo;
+import com.wwt.managemail.vo.StackedLineChart;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface BankBillService {
     List<BankBillVo> query(BankBillQuery bankBillQuery);
 
     List<BankBillTotalVo> queryCurrentYearTotal();
+
+    StackedLineChart totalByMonth(BankBillQuery bankBillQuery) throws Exception;
 }
