@@ -66,7 +66,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankMyProduct.setState(2);
         bankMyProductMapper.transaction(bankMyProduct);
         //账单，先记录利息
-        bankBill.setTransactionType(TransactionTypeEnum.investment_redeem_interest.getCode());
+        bankBill.setTransactionType(TransactionTypeEnum.investmentIncome.getCode());
         bankBillService.insertSelective(bankBill);
         bankService.transaction(bankBill);
         // 在记录本金
