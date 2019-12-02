@@ -10,7 +10,7 @@ import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankMyProductQueryVO;
 import com.wwt.managemail.vo.BankMyProductVo;
-import com.wwt.managemail.vo.ProductIncome;
+import com.wwt.managemail.vo.ProductTransaction;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,12 +57,38 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public int income(ProductIncome bankBill) {
+    public int redeem(ProductTransaction bankBill) {
+        // 基金赎回，增加利息，修改状态
         BankMyProduct bankMyProduct = new BankMyProduct();
         bankMyProduct.setId(bankBill.getMyProductId());
         bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
         bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
-        bankMyProductMapper.income(bankMyProduct);
+        bankMyProduct.setState(2);
+        bankMyProductMapper.transaction(bankMyProduct);
+        //账单，先记录利息
+        bankBill.setTransactionType(TransactionTypeEnum.investment_redeem_interest.getCode());
+        bankBillService.insertSelective(bankBill);
+        bankService.transaction(bankBill);
+        // 在记录本金
+        BankMyProduct bankMyProductDb = bankMyProductMapper.selectByPrimaryKey(bankBill.getMyProductId());
+        bankBill.setTransactionAmount(bankMyProductDb.getInvestmentAmount());
+        bankBill.setTransactionType(TransactionTypeEnum.investment_redeem_principal.getCode());
+        bankBill.setId(null);
+        bankBillService.insertSelective(bankBill);
+        //银行卡做账
+        bankBill.setTransactionAmount(bankMyProductDb.getInvestmentAmount());
+        bankService.transaction(bankBill);
+        return 0;
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public int income(ProductTransaction bankBill) {
+        BankMyProduct bankMyProduct = new BankMyProduct();
+        bankMyProduct.setId(bankBill.getMyProductId());
+        bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
+        bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
+        bankMyProductMapper.transaction(bankMyProduct);
         bankService.transaction(bankBill);
         bankBillService.insertSelective(bankBill);
         return 0;

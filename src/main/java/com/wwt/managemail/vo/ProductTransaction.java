@@ -8,7 +8,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
-public class ProductIncome extends BankBill {
+public class ProductTransaction extends BankBill {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date nextProfitDate;

@@ -8,6 +8,10 @@ public enum TransactionTypeEnum {
     cashInterestIncome(4, "活期利息收入"),
     investment(5, "买入理财"),
     investmentIncome(6, "理财利息收入"),
+    init_new(8, "初始建账"),
+    investment_redeem(9, "理财赎回"),
+    investment_redeem_interest(10, "理财赎回利息"),
+    investment_redeem_principal(11, "理财赎回本金"),
     ;
     private int code;
 

@@ -86,4 +86,6 @@ public class BankMyProduct {
     private String creator;
     private Date createTime;
     private String remark;
+    private Integer state;
+
 }

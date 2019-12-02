@@ -2,12 +2,13 @@ package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.BankMyProduct;
+import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.vo.BankMyProductQueryVO;
 import com.wwt.managemail.vo.BankMyProductVo;
-import com.wwt.managemail.vo.ProductIncome;
+import com.wwt.managemail.vo.ProductTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -36,14 +37,20 @@ public class BankMyProductController extends BaseController {
     /**
      * 利息收入
      *
-     * @param productIncome
+     * @param productTransaction
      * @return
      */
     @PostMapping("income")
-    public Result<Integer> income(@RequestBody ProductIncome productIncome) {
-        int code = bankMyProductService.income(productIncome);
+    public Result<Integer> income(@RequestBody ProductTransaction productTransaction) {
+        int code = 0;
+        if (TransactionTypeEnum.investment_redeem.getCode() == productTransaction.getTransactionType()) {
+            code = bankMyProductService.redeem(productTransaction);
+        } else {
+            code = bankMyProductService.income(productTransaction);
+        }
         return Result.sucess(code);
     }
+
 
     @PostMapping("select")
     public Result<List<BankMyProductVo>> select(@RequestBody BankMyProductQueryVO bankMyProductQueryVO) {

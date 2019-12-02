@@ -4,6 +4,7 @@ import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.mapper.BankMapper;
+import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.MoneyUtills;
 import com.wwt.managemail.vo.BankQueryVO;
@@ -11,6 +12,7 @@ import com.wwt.managemail.vo.BankTotalVo;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -20,6 +22,9 @@ import java.util.List;
 public class BankServiceImpl implements BankService {
     @Autowired
     private BankMapper bankMapper;
+    @Autowired
+    private BankBillService bankBillService;
+
 
     @Override
     public Bank selectById(Integer id) {
@@ -27,11 +32,22 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public int insertSelective(Bank bank) {
 
         bank.setCreator("admin");
         bank.setCreateTime(new Date());
-        return bankMapper.insertSelective(bank);
+        int count = bankMapper.insertSelective(bank);
+
+        BankBill bill = new BankBill();
+        bill.setTransactionType(TransactionTypeEnum.init_new.getCode());
+        bill.setBankCardId(bank.getId());
+        bill.setTransactionAmount(bank.getCashAmount());
+        bill.setTransactionTime(new Date());
+
+        bankBillService.insertSelective(bill);
+
+        return count;
     }
 
     @Override
@@ -44,6 +60,10 @@ public class BankServiceImpl implements BankService {
         if (TransactionTypeEnum.investment.getCode() == bankBill.getTransactionType()) {
             bank.setInvestmentAmount(bankBill.getTransactionAmount());
         }
+        if (TransactionTypeEnum.investment_redeem_principal.getCode() == bankBill.getTransactionType()) {
+            bank.setInvestmentAmount(bankBill.getTransactionAmount().negate());
+        }
+
         return bankMapper.transaction(bank);
     }
 

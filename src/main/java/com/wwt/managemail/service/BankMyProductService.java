@@ -3,7 +3,7 @@ package com.wwt.managemail.service;
 import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.vo.BankMyProductQueryVO;
 import com.wwt.managemail.vo.BankMyProductVo;
-import com.wwt.managemail.vo.ProductIncome;
+import com.wwt.managemail.vo.ProductTransaction;
 
 import java.util.List;
 
@@ -18,7 +18,15 @@ public interface BankMyProductService {
 
     int buy(BankMyProduct bankMyProduct);
 
-    int income(ProductIncome productIncome);
+    /**
+     * 赎回
+     *
+     * @param productTransaction
+     * @return
+     */
+    int redeem(ProductTransaction productTransaction);
+
+    int income(ProductTransaction productTransaction);
 
     List<BankMyProduct> selectAll();
 
