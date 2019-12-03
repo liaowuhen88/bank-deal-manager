@@ -15,7 +15,19 @@ public class BankTotalVo {
      * 投资金额
      */
     private BigDecimal totalInvestmentAmount;
-
+    /**
+     * 总金额
+     */
     private BigDecimal totalAccountBalance;
 
+
+    public BigDecimal getTotalAccountBalance() {
+        if (null == totalCashAmount) {
+            return totalInvestmentAmount;
+        }
+        if (null == totalInvestmentAmount) {
+            return totalCashAmount;
+        }
+        return totalCashAmount.add(totalInvestmentAmount);
+    }
 }

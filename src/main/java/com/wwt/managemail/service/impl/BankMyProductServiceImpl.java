@@ -51,7 +51,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankBill.setRemark(bankMyProduct.getRemark());
         bankService.transaction(bankBill);
         bankBillService.insertSelective(bankBill);
-
+        bankMyProduct.setState(1);
         return insertSelective(bankMyProduct);
     }
 
