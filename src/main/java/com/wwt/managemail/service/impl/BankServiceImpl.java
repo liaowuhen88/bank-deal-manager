@@ -79,7 +79,7 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public List<Bank> select(BankQueryVO bankQueryVO) {
+    public List<Bank> selectByQuery(BankQueryVO bankQueryVO) {
         Bank bank = new Bank();
         if (StringUtils.isNotEmpty(bankQueryVO.getUserName())) {
             bank.setName(bankQueryVO.getUserName());
@@ -87,7 +87,7 @@ public class BankServiceImpl implements BankService {
         if (StringUtils.isNotEmpty(bankQueryVO.getBankName())) {
             bank.setBankName(bankQueryVO.getBankName());
         }
-        return bankMapper.select(bank);
+        return bankMapper.selectByQuery(bank);
     }
 
     @Override

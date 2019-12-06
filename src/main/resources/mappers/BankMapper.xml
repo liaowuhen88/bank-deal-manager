@@ -19,4 +19,18 @@
     select sum(cash_amount) total_cash_amount,sum(investment_amount) total_investment_amount from bank
   </select>
 
+  <select id="selectByQuery" parameterType="com.wwt.managemail.entity.Bank"
+          resultType="com.wwt.managemail.entity.Bank">
+    select bank.* from bank
+    where 1 = 1
+    <if test="bankName != null and bankName != ''">
+      and bank.bank_name = #{bankName,jdbcType=VARCHAR}
+    </if>
+    <if test="name != null and name != ''">
+      and bank.name = #{name,jdbcType=VARCHAR}
+    </if>
+
+    order by id desc ;
+  </select>
+
 </mapper>

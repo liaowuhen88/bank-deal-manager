@@ -20,7 +20,7 @@ public interface BankService {
 
     List<Bank> selectAll();
 
-    List<Bank> select(BankQueryVO bankQueryVO);
+    List<Bank> selectByQuery(BankQueryVO bankQueryVO);
 
     BankTotalVo selectTotal();
 
