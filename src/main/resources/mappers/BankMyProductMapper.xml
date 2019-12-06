@@ -36,6 +36,7 @@
             and bank_my_product.profit_date &lt;= #{expireInterestTime,jdbcType=DATE}
         </if>
 
+        order by id desc ;
     </select>
 
 </mapper>

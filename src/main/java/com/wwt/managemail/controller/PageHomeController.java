@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/pageHome")
-public class PageHomeController {
+public class PageHomeController extends BaseController {
     @Autowired
     private BankService bankService;
     @Autowired

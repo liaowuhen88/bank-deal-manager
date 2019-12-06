@@ -1,5 +1,6 @@
 package com.wwt.managemail.vo;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.utils.MoneyUtills;
 import lombok.Data;
@@ -14,7 +15,7 @@ public class BankBillVo {
 
     private BigDecimal transactionAmount;
     private Integer transactionType;
-
+    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date transactionTime;
     private String creator;
 

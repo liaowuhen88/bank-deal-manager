@@ -17,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/bankBill")
-public class BankBillController {
+public class BankBillController extends BaseController {
 
     @Autowired
     BankBillService billService;

@@ -88,4 +88,11 @@ public class BankMyProduct {
     private String remark;
     private Integer state;
 
+    public BigDecimal getPrincipalAndInterestIncome() {
+        if (null == totalEffectiveInterestIncome) {
+            return investmentAmount;
+        }
+        return investmentAmount.add(totalEffectiveInterestIncome);
+    }
+
 }

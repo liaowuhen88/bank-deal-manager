@@ -52,10 +52,15 @@ public class BankServiceImpl implements BankService {
 
     @Override
     public Integer transaction(BankBill bankBill) {
+        BigDecimal realMoney = MoneyUtills.getRealMoney(bankBill.getTransactionType(), bankBill.getTransactionAmount());
+        Bank bankDb = selectById(bankBill.getBankCardId());
+        if (bankDb.getCashAmount().add(realMoney).compareTo(new BigDecimal("0")) == -1) {
+            throw new RuntimeException("金额不足");
+        }
         Bank bank = new Bank();
         bank.setId(Math.toIntExact(bankBill.getBankCardId()));
         // 支出等需要取负数
-        BigDecimal realMoney = MoneyUtills.getRealMoney(bankBill.getTransactionType(), bankBill.getTransactionAmount());
+
         bank.setCashAmount(realMoney);
         if (TransactionTypeEnum.investment.getCode() == bankBill.getTransactionType()) {
             bank.setInvestmentAmount(bankBill.getTransactionAmount());

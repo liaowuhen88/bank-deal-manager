@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wwt.managemail.mapper.BankMapper">
-  <select id="transaction" parameterType="com.wwt.managemail.entity.Bank" resultType="Integer">
+  <update id="transaction" parameterType="com.wwt.managemail.entity.Bank">
     update bank
     <set>
       <if test="cashAmount != null">
@@ -13,7 +13,7 @@
     </set>
     where id = #{id,jdbcType=INTEGER}
 
-  </select>
+  </update>
 
   <select id="selectTotal" resultType="com.wwt.managemail.vo.BankTotalVo">
     select sum(cash_amount) total_cash_amount,sum(investment_amount) total_investment_amount from bank
