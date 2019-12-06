@@ -95,4 +95,10 @@ public class BankMyProduct {
         return investmentAmount.add(totalEffectiveInterestIncome);
     }
 
+    public BigDecimal getInvestmentAmount() {
+        if (null != state && state == 2) {
+            return new BigDecimal("0");
+        }
+        return investmentAmount;
+    }
 }

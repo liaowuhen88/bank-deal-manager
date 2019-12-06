@@ -11,7 +11,7 @@ public class BankBillQuery {
     private String bankName;
     private String bankCard;
     private int[] transactionTypes;
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date[] times;
 
     public Date getStartTime() {

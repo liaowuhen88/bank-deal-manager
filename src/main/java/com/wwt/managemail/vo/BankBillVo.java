@@ -15,7 +15,7 @@ public class BankBillVo {
 
     private BigDecimal transactionAmount;
     private Integer transactionType;
-    @JsonFormat(locale = "zh", timezone = "GMT+8", pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date transactionTime;
     private String creator;
 
