@@ -29,7 +29,7 @@
         <if test="userName != null and userName != ''">
             and bank.name = #{userName,jdbcType=VARCHAR}
         </if>
-        <if test="state != null and state != ''">
+        <if test="state != null">
             and bank_my_product.state = #{state,jdbcType=VARCHAR}
         </if>
         <if test="expireProductTime != null">

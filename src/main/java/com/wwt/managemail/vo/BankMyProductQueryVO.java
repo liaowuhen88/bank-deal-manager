@@ -15,4 +15,6 @@ public class BankMyProductQueryVO extends BankQueryVO {
      * 到期利息时间
      */
     private Date expireInterestTime;
+
+    private Integer state;
 }
