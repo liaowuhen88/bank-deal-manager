@@ -1,5 +1,6 @@
 package com.wwt.managemail.controller;
 
+import com.github.pagehelper.Page;
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.mapper.BankNameMapper;
@@ -40,9 +41,11 @@ public class BankController extends BaseController {
     }
 
     @PostMapping("select")
-    public Result<List<Bank>> select(@RequestBody BankQueryVO bankQueryVO) {
-        List<Bank> list = bankService.selectByQuery(bankQueryVO);
-        return Result.sucess(list);
+    public Result<Page<Bank>> select(@RequestBody BankQueryVO bankQueryVO) {
+        Page<Bank> list = bankService.selectByQuery(bankQueryVO);
+        Result result = Result.sucess(list);
+        result.setTotal(list.getTotal());
+        return result;
     }
 
     @PostMapping("selectUserNamesAndBankNames")

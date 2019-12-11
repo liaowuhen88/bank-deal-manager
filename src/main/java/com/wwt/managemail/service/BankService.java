@@ -1,5 +1,6 @@
 package com.wwt.managemail.service;
 
+import com.github.pagehelper.Page;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.vo.BankQueryVO;
@@ -20,7 +21,7 @@ public interface BankService {
 
     List<Bank> selectAll();
 
-    List<Bank> selectByQuery(BankQueryVO bankQueryVO);
+    Page<Bank> selectByQuery(BankQueryVO bankQueryVO);
 
     BankTotalVo selectTotal();
 

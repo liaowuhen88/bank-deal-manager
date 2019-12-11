@@ -30,7 +30,7 @@
       and bank.name = #{name,jdbcType=VARCHAR}
     </if>
 
-    order by id desc ;
+    order by id desc
   </select>
 
 </mapper>

@@ -1,5 +1,6 @@
 package com.wwt.managemail.controller;
 
+import com.github.pagehelper.Page;
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.service.BankBillService;
@@ -29,9 +30,11 @@ public class BankBillController extends BaseController {
     }
 
     @PostMapping("query")
-    public Result< List<BankBillVo>> query(@Validated @RequestBody BankBillQuery bankBillQuery){
-        List<BankBillVo> list = billService.query(bankBillQuery);
-        return Result.sucess(list);
+    public Result<List<BankBillVo>> query(@Validated @RequestBody BankBillQuery bankBillQuery) {
+        Page<BankBillVo> list = billService.query(bankBillQuery);
+        Result result = Result.sucess(list);
+        result.setTotal(list.getTotal());
+        return result;
     }
 
     @PostMapping("totalByMonth")

@@ -1,6 +1,8 @@
 package com.wwt.managemail.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.mapper.BankBillMapper;
@@ -55,7 +57,8 @@ public class BankBillServiceImpl implements BankBillService {
     }
 
     @Override
-    public List<BankBillVo> query(BankBillQuery bankBillQuery) {
+    public Page<BankBillVo> query(BankBillQuery bankBillQuery) {
+        PageHelper.startPage(bankBillQuery.getPage(), bankBillQuery.getPageSize());
         return bankBillMapper.query(bankBillQuery);
     }
 

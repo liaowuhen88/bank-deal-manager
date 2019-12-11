@@ -2,12 +2,11 @@ package com.wwt.managemail.common;
 
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 public class Result<T> {
     private int code;
     private T data;// 当前页数据
+    private long total;
     private String msg;
     public Result() {
     }

@@ -1,5 +1,6 @@
 package com.wwt.managemail.service;
 
+import com.github.pagehelper.Page;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.vo.BankBillQuery;
 import com.wwt.managemail.vo.BankBillTotalVo;
@@ -13,7 +14,7 @@ public interface BankBillService {
 
     int transaction(BankBill bank);
 
-    List<BankBillVo> query(BankBillQuery bankBillQuery);
+    Page<BankBillVo> query(BankBillQuery bankBillQuery);
 
     List<BankBillTotalVo> queryCurrentYearTotal();
 

@@ -1,5 +1,7 @@
 package com.wwt.managemail.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.enums.TransactionTypeEnum;
@@ -79,7 +81,7 @@ public class BankServiceImpl implements BankService {
     }
 
     @Override
-    public List<Bank> selectByQuery(BankQueryVO bankQueryVO) {
+    public Page<Bank> selectByQuery(BankQueryVO bankQueryVO) {
         Bank bank = new Bank();
         if (StringUtils.isNotEmpty(bankQueryVO.getUserName())) {
             bank.setName(bankQueryVO.getUserName());
@@ -87,6 +89,7 @@ public class BankServiceImpl implements BankService {
         if (StringUtils.isNotEmpty(bankQueryVO.getBankName())) {
             bank.setBankName(bankQueryVO.getBankName());
         }
+        PageHelper.startPage(bankQueryVO.getPage(), bankQueryVO.getPageSize());
         return bankMapper.selectByQuery(bank);
     }
 
