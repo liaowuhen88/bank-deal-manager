@@ -33,7 +33,7 @@ public class PageHomeController extends BaseController {
         PageHomeVo pageHomeVo = new PageHomeVo();
         BankTotalVo bankTotalVo = bankService.selectTotal();
         List<BankBillTotalVo> list = bankBillService.queryCurrentYearTotal();
-        Map<Integer, BankBillTotalVo> map = list.stream().collect(Collectors.toMap(BankBillTotalVo::getTransactionType, account -> account));
+        Map<String, BankBillTotalVo> map = list.stream().collect(Collectors.toMap(BankBillTotalVo::getTransactionTypeString, account -> account));
 
         List<BankMyProductVo> expireProduct = bankMyProductService.expireProduct();
         List<BankMyProductVo> expireInterest = bankMyProductService.expireInterest();

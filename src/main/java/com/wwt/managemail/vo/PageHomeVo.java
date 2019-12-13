@@ -8,7 +8,7 @@ import java.util.Map;
 @Data
 public class PageHomeVo {
     BankTotalVo bankTotalVo;
-    Map<Integer, BankBillTotalVo> integerBankBillTotalVoMap;
+    Map<String, BankBillTotalVo> integerBankBillTotalVoMap;
     /**
      * 到期产品
      */

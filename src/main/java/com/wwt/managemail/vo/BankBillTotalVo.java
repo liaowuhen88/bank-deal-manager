@@ -1,5 +1,6 @@
 package com.wwt.managemail.vo;
 
+import com.wwt.managemail.enums.TransactionTypeEnum;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -12,5 +13,9 @@ public class BankBillTotalVo {
 
     private String time;
 
+
+    public String getTransactionTypeString() {
+        return TransactionTypeEnum.getByCode(transactionType).getEnCode();
+    }
 
 }
