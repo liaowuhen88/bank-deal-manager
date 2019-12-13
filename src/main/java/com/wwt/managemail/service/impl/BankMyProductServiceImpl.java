@@ -43,16 +43,19 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         if (bank.getCashAmount().compareTo(bankMyProduct.getInvestmentAmount()) == -1) {
             throw new RuntimeException("金额不足");
         }
+        bankMyProduct.setState(1);
+        int code = insertSelective(bankMyProduct);
+
         BankBill bankBill = new BankBill();
         bankBill.setBankCardId(bankMyProduct.getBankCardId());
         bankBill.setTransactionAmount(bankMyProduct.getInvestmentAmount());
+        bankBill.setMyProductId(bankMyProduct.getId());
         bankBill.setTransactionType(TransactionTypeEnum.investment.getCode());
         bankBill.setTransactionTime(bankMyProduct.getBuyingTime());
         bankBill.setRemark(bankMyProduct.getRemark());
         bankService.transaction(bankBill);
         bankBillService.insertSelective(bankBill);
-        bankMyProduct.setState(1);
-        return insertSelective(bankMyProduct);
+        return code;
     }
 
     @Override

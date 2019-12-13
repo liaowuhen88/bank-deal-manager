@@ -26,6 +26,9 @@
     <if test="endTime != null">
       and bank_bill.create_time &lt;= #{endTime,jdbcType=DATE}
     </if>
+    <if test="myProductId != null">
+      and bank_bill.my_product_id = #{myProductId,jdbcType=INTEGER}
+    </if>
     order by bank_bill.id desc
 
   </select>

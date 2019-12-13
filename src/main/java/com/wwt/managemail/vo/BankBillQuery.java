@@ -10,6 +10,8 @@ public class BankBillQuery extends CommonSearchVO {
     private String userName;
     private String bankName;
     private String bankCard;
+    // 产品id
+    private Integer myProductId;
     private int[] transactionTypes;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date[] times;
