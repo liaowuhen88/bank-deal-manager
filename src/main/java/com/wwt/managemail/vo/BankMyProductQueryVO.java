@@ -19,4 +19,6 @@ public class BankMyProductQueryVO extends BankQueryVO {
     private Integer state;
 
     private Integer myProductId;
+
+    private String productType;
 }
