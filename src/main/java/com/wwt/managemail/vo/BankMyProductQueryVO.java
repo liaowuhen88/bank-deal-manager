@@ -17,4 +17,6 @@ public class BankMyProductQueryVO extends BankQueryVO {
     private Date expireInterestTime;
 
     private Integer state;
+
+    private Integer myProductId;
 }

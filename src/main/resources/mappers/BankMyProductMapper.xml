@@ -38,7 +38,9 @@
         <if test="expireInterestTime != null">
             and bank_my_product.profit_date &lt;= #{expireInterestTime,jdbcType=DATE}
         </if>
-
+        <if test="myProductId != null">
+            and bank_my_product.my_product_id &lt;= #{myProductId,jdbcType=INTEGER}
+        </if>
         order by id desc ;
     </select>
 
