@@ -42,9 +42,8 @@ public class BankController extends BaseController {
 
     @PostMapping("select")
     public Result<Page<Bank>> select(@RequestBody BankQueryVO bankQueryVO) {
-        Page<Bank> list = bankService.selectByQuery(bankQueryVO);
+        List<Bank> list = bankService.selectByQuery(bankQueryVO);
         Result result = Result.sucess(list);
-        result.setTotal(list.getTotal());
         return result;
     }
 
