@@ -39,8 +39,8 @@ public class BankBillServiceImpl implements BankBillService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int transaction(BankBill bankBill) {
-        insertSelective(bankBill);
         bankService.transaction(bankBill);
+        insertSelective(bankBill);
         //如果是转账,需要给转帐方增加记录
         if (TransactionTypeEnum.transfer_out.getCode() == bankBill.getTransactionType()) {
             BankBill bill = new BankBill();
@@ -60,6 +60,15 @@ public class BankBillServiceImpl implements BankBillService {
     public Page<BankBillVo> query(BankBillQuery bankBillQuery) {
         PageHelper.startPage(bankBillQuery.getPage(), bankBillQuery.getPageSize());
         return bankBillMapper.query(bankBillQuery);
+    }
+
+    @Override
+    public BankBillVo queryLaste(BankBillQuery bankBillQuery) {
+        Page<BankBillVo> list = bankBillMapper.query(bankBillQuery);
+        if (null != list) {
+            return list.get(0);
+        }
+        return null;
     }
 
     @Override

@@ -37,6 +37,13 @@ public class BankBillController extends BaseController {
         return result;
     }
 
+    @PostMapping("queryLaste")
+    public Result<List<BankBillVo>> queryLaste(@Validated @RequestBody BankBillQuery bankBillQuery) {
+        BankBillVo list = billService.queryLaste(bankBillQuery);
+        Result result = Result.sucess(list);
+        return result;
+    }
+
     @PostMapping("totalByMonth")
     public Result<StackedLineChart> totalByMonth(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
         StackedLineChart list = billService.totalByMonth(bankBillQuery);

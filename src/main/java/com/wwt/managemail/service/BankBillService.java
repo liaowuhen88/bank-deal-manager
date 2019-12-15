@@ -16,6 +16,8 @@ public interface BankBillService {
 
     Page<BankBillVo> query(BankBillQuery bankBillQuery);
 
+    BankBillVo queryLaste(BankBillQuery bankBillQuery);
+
     List<BankBillTotalVo> queryCurrentYearTotal();
 
     StackedLineChart totalByMonth(BankBillQuery bankBillQuery) throws Exception;
