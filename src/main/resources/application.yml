@@ -37,6 +37,7 @@ yuanbo:
     allowedOrigins:
       - http://localhost:8080
       - http://localhost:8081
+      - http://localhost:8086
       - http://mf.tianmeihy.com
     allowCredentials: true
     allowedHeaders:
