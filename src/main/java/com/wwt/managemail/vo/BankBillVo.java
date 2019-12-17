@@ -29,6 +29,8 @@ public class BankBillVo {
 
     private String bankCard;
 
+    private String myProductId;
+
     public String getTransactionTypeMsg() {
         return TransactionTypeEnum.getByCode(transactionType).getMsg();
     }
