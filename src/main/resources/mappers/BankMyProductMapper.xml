@@ -19,6 +19,12 @@
 
     </update>
 
+    <select id="selectInterestPaymentMethod"
+            resultType="java.lang.String">
+        select interest_payment_method from bank_my_product group by interest_payment_method
+
+    </select>
+
     <select id="selectByBankMyProductQueryVO" parameterType="com.wwt.managemail.vo.BankMyProductQueryVO"
             resultType="com.wwt.managemail.entity.BankMyProduct">
         select bank_my_product.* from bank_my_product inner join bank on bank.id = bank_my_product.bank_card_id

@@ -15,6 +15,7 @@ public interface BankMyProductMapper extends CommonMapper<BankMyProduct> {
      */
     int transaction(BankMyProduct bankMyProduct);
 
+    List<String> selectInterestPaymentMethod();
 
     List<BankMyProduct> selectByBankMyProductQueryVO(BankMyProductQueryVO bankMyProductQueryVO);
 }

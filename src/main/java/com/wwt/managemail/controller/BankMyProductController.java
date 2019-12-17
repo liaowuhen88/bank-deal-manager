@@ -58,4 +58,11 @@ public class BankMyProductController extends BaseController {
 
         return Result.sucess(list);
     }
+
+    @PostMapping("selectInterestPaymentMethod")
+    public Result<List<String>> selectInterestPaymentMethod() {
+        List<String> list = bankMyProductService.selectInterestPaymentMethod();
+
+        return Result.sucess(list);
+    }
 }

@@ -32,6 +32,8 @@ public interface BankMyProductService {
 
     List<BankMyProductVo> select(BankMyProductQueryVO bankMyProductQueryVO);
 
+    List<String> selectInterestPaymentMethod();
+
     List<BankMyProductVo> expireProduct();
 
     /**

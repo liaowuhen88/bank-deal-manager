@@ -109,6 +109,11 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
+    public List<String> selectInterestPaymentMethod() {
+        return bankMyProductMapper.selectInterestPaymentMethod();
+    }
+
+    @Override
     public List<BankMyProductVo> expireProduct() {
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
         bankMyProductQueryVO.setExpireProductTime(new Date());
