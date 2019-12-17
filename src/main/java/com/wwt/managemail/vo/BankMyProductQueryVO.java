@@ -21,4 +21,8 @@ public class BankMyProductQueryVO extends BankQueryVO {
     private Integer myProductId;
 
     private String productType;
+    /**
+     * 付息方式
+     */
+    private String interestPaymentMethod;
 }

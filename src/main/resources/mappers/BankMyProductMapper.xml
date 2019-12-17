@@ -50,7 +50,9 @@
         <if test="productType != null and productType != ''">
             and bank_my_product.product_type = #{productType,jdbcType=INTEGER}
         </if>
-
+        <if test="interestPaymentMethod != null and interestPaymentMethod != ''">
+            and bank_my_product.interest_payment_method = #{interestPaymentMethod,jdbcType=INTEGER}
+        </if>
         order by id desc
     </select>
 
