@@ -81,8 +81,10 @@ public class BankBillServiceImpl implements BankBillService {
 
     @Override
     public StackedLineChart totalByMonth(BankBillQuery bankBillQuery) throws Exception {
-        bankBillQuery.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-        bankBillQuery.setEndTime(new Date());
+        if (null == bankBillQuery.getStartTime() && null == bankBillQuery.getEndTime()) {
+            bankBillQuery.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            bankBillQuery.setEndTime(new Date());
+        }
         //创建图表数据
         StackedLineChart stackedLineChart = new StackedLineChart();
         // 生成横轴数据
