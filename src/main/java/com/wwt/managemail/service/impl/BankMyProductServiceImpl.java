@@ -59,6 +59,11 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
+    public int update(BankMyProduct bankMyProduct) {
+        return bankMyProductMapper.updateByPrimaryKeySelective(bankMyProduct);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public int redeem(ProductTransaction bankBill) {
         // 基金赎回，增加利息，修改状态

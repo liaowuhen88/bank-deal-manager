@@ -6,7 +6,9 @@ import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.utils.BeanUtil;
 import com.wwt.managemail.vo.BankMyProductQueryVO;
+import com.wwt.managemail.vo.BankMyProductUpdateVO;
 import com.wwt.managemail.vo.BankMyProductVo;
 import com.wwt.managemail.vo.ProductTransaction;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,12 @@ public class BankMyProductController extends BaseController {
         return Result.sucess(code);
     }
 
+    @PostMapping("update")
+    public Result<Integer> update(@RequestBody BankMyProductUpdateVO bankMyProductUpdateVO) {
+        BankMyProduct bankMyProduct = BeanUtil.copyProperties(bankMyProductUpdateVO, BankMyProduct.class);
+        int code = bankMyProductService.update(bankMyProduct);
+        return Result.sucess(code);
+    }
     /**
      * 利息收入
      *

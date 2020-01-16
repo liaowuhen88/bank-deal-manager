@@ -18,6 +18,8 @@ public interface BankMyProductService {
 
     int buy(BankMyProduct bankMyProduct);
 
+    int update(BankMyProduct bankMyProduct);
+
     /**
      * 赎回
      *
