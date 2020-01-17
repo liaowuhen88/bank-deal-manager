@@ -27,7 +27,8 @@
 
     <select id="expectedIncome"
             resultType="com.wwt.managemail.vo.ExpectedIncomeTotalVo">
-        select profit_date,sum(expected_interest_income_month) expected_interest_income_month from bank_my_product group
+        select DATE_FORMAT(profit_date,'%Y-%m-%d') profit_date,sum(expected_interest_income_month)
+        expected_interest_income_month from bank_my_product where state = 1 group
         by profit_date
 
     </select>

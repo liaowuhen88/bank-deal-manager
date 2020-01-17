@@ -8,7 +8,6 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
-import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,15 +136,13 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
     @Override
     public StackedLineChart expectedIncome(BankBillQuery bankBillQuery) throws Exception {
-        if (null == bankBillQuery.getStartTime() && null == bankBillQuery.getEndTime()) {
-            bankBillQuery.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            bankBillQuery.setEndTime(new Date());
-        }
         //创建图表数据
         StackedLineChart stackedLineChart = new StackedLineChart();
         // 生成横轴数据
-        List<String> times = TimeUtils.getMonthBetween(bankBillQuery.getStartTime(), bankBillQuery.getEndTime());
-        List<Serie> mapSeries = initSeries(times);
+        List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
+
+        List<String> times = initTimes(expectedIncomeTotalVos);
+        List<Serie> mapSeries = initSeries(expectedIncomeTotalVos);
         Legend legend = initLegend(mapSeries);
 
         XAxis xAxis = new XAxis();
@@ -154,14 +151,28 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         stackedLineChart.setSeries(mapSeries);
         stackedLineChart.setLegend(legend);
 
-        List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
-        return null;
+
+        return stackedLineChart;
     }
 
-    public List<Serie> initSeries(List<String> times) {
+    public List<String> initTimes(List<ExpectedIncomeTotalVo> expectedIncomeTotalVos) {
+        List<String> list = new ArrayList<>();
+        for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
+            list.add(vo.getProfitDate());
+        }
+        return list;
+
+    }
+
+    public List<Serie> initSeries(List<ExpectedIncomeTotalVo> expectedIncomeTotalVos) {
         List<Serie> list = new ArrayList<>();
 
-        List<String> investmentIncomeData = new ArrayList<>(times.size());
+
+        List<String> investmentIncomeData = new ArrayList<>();
+        for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
+            investmentIncomeData.add(vo.getExpectedInterestIncomeMonth().toString());
+        }
+
         Serie investmentIncome = new Serie();
         investmentIncome.setName("预期收益");
         investmentIncome.setData(investmentIncomeData);
