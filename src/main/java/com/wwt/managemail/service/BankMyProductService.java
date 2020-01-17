@@ -1,9 +1,7 @@
 package com.wwt.managemail.service;
 
 import com.wwt.managemail.entity.BankMyProduct;
-import com.wwt.managemail.vo.BankMyProductQueryVO;
-import com.wwt.managemail.vo.BankMyProductVo;
-import com.wwt.managemail.vo.ProductTransaction;
+import com.wwt.managemail.vo.*;
 
 import java.util.List;
 
@@ -44,4 +42,7 @@ public interface BankMyProductService {
      * @return
      */
     List<BankMyProductVo> expireInterest();
+
+    StackedLineChart expectedIncome(BankBillQuery bankBillQuery) throws Exception;
+
 }

@@ -8,9 +8,8 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
-import com.wwt.managemail.vo.BankMyProductQueryVO;
-import com.wwt.managemail.vo.BankMyProductVo;
-import com.wwt.managemail.vo.ProductTransaction;
+import com.wwt.managemail.utils.TimeUtils;
+import com.wwt.managemail.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -133,6 +132,53 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankMyProductQueryVO.setState(1);
         List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
         return getBankMyProductVos(list);
+    }
+
+
+    @Override
+    public StackedLineChart expectedIncome(BankBillQuery bankBillQuery) throws Exception {
+        if (null == bankBillQuery.getStartTime() && null == bankBillQuery.getEndTime()) {
+            bankBillQuery.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            bankBillQuery.setEndTime(new Date());
+        }
+        //创建图表数据
+        StackedLineChart stackedLineChart = new StackedLineChart();
+        // 生成横轴数据
+        List<String> times = TimeUtils.getMonthBetween(bankBillQuery.getStartTime(), bankBillQuery.getEndTime());
+        List<Serie> mapSeries = initSeries(times);
+        Legend legend = initLegend(mapSeries);
+
+        XAxis xAxis = new XAxis();
+        xAxis.setData(times);
+        stackedLineChart.setXAxis(xAxis);
+        stackedLineChart.setSeries(mapSeries);
+        stackedLineChart.setLegend(legend);
+
+        List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
+        return null;
+    }
+
+    public List<Serie> initSeries(List<String> times) {
+        List<Serie> list = new ArrayList<>();
+
+        List<String> investmentIncomeData = new ArrayList<>(times.size());
+        Serie investmentIncome = new Serie();
+        investmentIncome.setName("预期收益");
+        investmentIncome.setData(investmentIncomeData);
+        list.add(investmentIncome);
+        return list;
+
+    }
+
+    public Legend initLegend(List<Serie> series) {
+        Legend legend = new Legend();
+        List<String> list = new ArrayList<>();
+        legend.setData(list);
+        for (Serie serie : series) {
+            list.add(serie.getName());
+        }
+        return legend;
+
     }
 
     List<BankMyProductVo> getBankMyProductVos(List<BankMyProduct> list) {

@@ -7,11 +7,9 @@ import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.BeanUtil;
-import com.wwt.managemail.vo.BankMyProductQueryVO;
-import com.wwt.managemail.vo.BankMyProductUpdateVO;
-import com.wwt.managemail.vo.BankMyProductVo;
-import com.wwt.managemail.vo.ProductTransaction;
+import com.wwt.managemail.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -73,4 +71,13 @@ public class BankMyProductController extends BaseController {
 
         return Result.sucess(list);
     }
+
+    @PostMapping("expectedIncome")
+    public Result<StackedLineChart> expectedIncome(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
+        StackedLineChart list = bankMyProductService.expectedIncome(bankBillQuery);
+
+        return Result.sucess(list);
+    }
+
+
 }

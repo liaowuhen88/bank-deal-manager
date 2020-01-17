@@ -25,6 +25,13 @@
 
     </select>
 
+    <select id="expectedIncome"
+            resultType="com.wwt.managemail.vo.ExpectedIncomeTotalVo">
+        select profit_date,sum(expected_interest_income_month) expected_interest_income_month from bank_my_product group
+        by profit_date
+
+    </select>
+
     <select id="selectByBankMyProductQueryVO" parameterType="com.wwt.managemail.vo.BankMyProductQueryVO"
             resultType="com.wwt.managemail.entity.BankMyProduct">
         select bank_my_product.* from bank_my_product inner join bank on bank.id = bank_my_product.bank_card_id
