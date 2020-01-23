@@ -76,6 +76,11 @@ public class ExcelExportController extends BaseController {
                 row.createCell(count++).setCellValue(vo.getExpectedInterestIncomeTotal().doubleValue());
                 row.createCell(count++).setCellValue(vo.getTotalEffectiveInterestIncome().doubleValue());
                 row.createCell(count++).setCellValue(vo.getPrincipalAndInterestIncome().doubleValue());
+                String status = "合约中";
+                if (2 == vo.getState()) {
+                    status = "已赎回";
+                }
+                row.createCell(count++).setCellValue(status);
 
             }
             String fileName = "投资明细.xlsx";
