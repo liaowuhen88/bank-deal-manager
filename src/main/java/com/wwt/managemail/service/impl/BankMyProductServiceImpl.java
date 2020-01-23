@@ -1,5 +1,6 @@
 package com.wwt.managemail.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.entity.BankMyProduct;
@@ -8,20 +9,25 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class BankMyProductServiceImpl implements BankMyProductService {
+    public final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Autowired
     private BankMyProductMapper bankMyProductMapper;
     @Autowired
@@ -139,10 +145,58 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         //创建图表数据
         StackedLineChart stackedLineChart = new StackedLineChart();
         // 生成横轴数据
-        List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(1);
+        List<BankMyProductVo> list = select(bankMyProductQueryVO);
+        //  key 基金id  key 日期  map 收益数组
+        Map<Integer, Map<String, List<BigDecimal>>> map = new HashMap();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
 
-        List<String> times = initTimes(expectedIncomeTotalVos);
-        List<Serie> mapSeries = initSeries(expectedIncomeTotalVos);
+        if (null != list) {
+            for (BankMyProductVo vo : list) {
+                // 设置为月份
+                logger.info("类型：{}", vo.getInterestPaymentMethod());
+                String start = sdf.format(vo.getProfitDate());
+                if ("月付".equals(vo.getInterestPaymentMethod())) {
+                    List<String> times = TimeUtils.getMonthBetween(vo.getProfitDate(), vo.getDueTime());
+                    //logger.info(JSON.toJSONString(times));
+                    if (null != times) {
+                        for (String time : times) {
+                            addExpectedInterestIncomeMonth(map, time, vo);
+                        }
+                    }
+                    // 获取所有的月份  start---end
+                } else if ("季付".equals(vo.getInterestPaymentMethod())) {
+                    List<String> times = TimeUtils.getMonthBetween(vo.getProfitDate(), vo.getDueTime(), 3);
+                    logger.info("季付：{}", JSON.toJSONString(times));
+                    if (null != times) {
+                        for (String time : times) {
+                            addExpectedInterestIncomeMonth(map, time, vo);
+                        }
+                    }
+                    // 获取所有的月份  start---end
+                } else if ("半年付".equals(vo.getInterestPaymentMethod())) {
+                    List<String> times = TimeUtils.getMonthBetween(vo.getProfitDate(), vo.getDueTime(), 6);
+                    logger.info("半年付：{}", JSON.toJSONString(times));
+                    if (null != times) {
+                        for (String time : times) {
+                            addExpectedInterestIncomeMonth(map, time, vo);
+                        }
+                    }
+                    // 获取所有的月份  start---end
+                } else if ("一次性".equals(vo.getInterestPaymentMethod())) {
+                    addExpectedInterestIncomeMonth(map, start, vo);
+                }
+            }
+        }
+
+        logger.info(JSON.toJSONString(map));
+        Map<Integer, List<ExpectedIncomeTotalVo>> maps = coverto(map);
+        //List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
+        logger.info(JSON.toJSONString(maps));
+        List<String> times = initTimes(maps);
+        times = filter(times, bankBillQuery);
+        List<Serie> mapSeries = initSeries(times, maps);
         Legend legend = initLegend(mapSeries);
 
         XAxis xAxis = new XAxis();
@@ -151,32 +205,122 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         stackedLineChart.setSeries(mapSeries);
         stackedLineChart.setLegend(legend);
 
-
         return stackedLineChart;
     }
 
-    public List<String> initTimes(List<ExpectedIncomeTotalVo> expectedIncomeTotalVos) {
-        List<String> list = new ArrayList<>();
-        for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
-            list.add(vo.getProfitDate());
+    private List<ExpectedIncomeTotalVo> covertoList(Map<String, List<BigDecimal>> map) {
+        List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = new ArrayList<>();
+        for (Map.Entry<String, List<BigDecimal>> entry : map.entrySet()) {
+            ExpectedIncomeTotalVo vo = new ExpectedIncomeTotalVo();
+            vo.setProfitDate(entry.getKey());
+            BigDecimal total = new BigDecimal(0);
+            List<BigDecimal> vos = entry.getValue();
+            if (null != vos) {
+                for (BigDecimal expectedInterestIncomeMonth : vos) {
+                    total = total.add(expectedInterestIncomeMonth);
+                }
+                vo.setExpectedInterestIncomeMonth(total);
+            }
+            expectedIncomeTotalVos.add(vo);
         }
-        return list;
+        Collections.sort(expectedIncomeTotalVos, (o1, o2) -> {
+            int i = o1.getProfitDate().compareTo(o2.getProfitDate());
+            return i;
+        });
+
+        return expectedIncomeTotalVos;
+    }
+
+    private Map<Integer, List<ExpectedIncomeTotalVo>> coverto(Map<Integer, Map<String, List<BigDecimal>>> map) {
+        Map<Integer, List<ExpectedIncomeTotalVo>> ret = new HashMap<>();
+        for (Map.Entry<Integer, Map<String, List<BigDecimal>>> entry : map.entrySet()) {
+            List<ExpectedIncomeTotalVo> list = covertoList(entry.getValue());
+            ret.put(entry.getKey(), list);
+        }
+
+        return ret;
+    }
+
+
+    private List<String> filter(List<String> tims, BankBillQuery bankBillQuery) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+        if (null != bankBillQuery.getStartTime() && null != bankBillQuery.getEndTime()) {
+            tims = tims.stream()
+                    .filter((String s) -> {
+                        try {
+                            return sdf.parse(s).after(bankBillQuery.getStartTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    })
+                    .filter((String s) -> {
+                        try {
+                            return sdf.parse(s).before(bankBillQuery.getEndTime());
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        return false;
+                    })
+                    .collect(Collectors.toList());
+        }
+        return tims;
+    }
+
+    private void addExpectedInterestIncomeMonth(Map<Integer, Map<String, List<BigDecimal>>> map, String time, BankMyProductVo vo) {
+        Map<String, List<BigDecimal>> idMap = map.get(vo.getId());
+        if (null == idMap) {
+            idMap = new HashMap<>();
+            map.put(vo.getId(), idMap);
+        }
+        List<BigDecimal> vos = idMap.get(time);
+        if (null == vos) {
+            vos = new ArrayList<>();
+            idMap.put(time, vos);
+        }
+        vos.add(vo.getExpectedInterestIncomeMonth());
+    }
+
+
+    public List<String> initTimes(Map<Integer, List<ExpectedIncomeTotalVo>> maps) {
+        List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = new ArrayList<>();
+        for (Map.Entry<Integer, List<ExpectedIncomeTotalVo>> entry : maps.entrySet()) {
+            expectedIncomeTotalVos.addAll(entry.getValue());
+        }
+        Set<String> set = new HashSet<>();
+        for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
+            set.add(vo.getProfitDate());
+        }
+        List<String> time = new ArrayList<>(set);
+        Collections.sort(time, (o1, o2) -> {
+            int i = o1.compareTo(o2);
+            return i;
+        });
+        return time;
 
     }
 
-    public List<Serie> initSeries(List<ExpectedIncomeTotalVo> expectedIncomeTotalVos) {
+    public List<Serie> initSeries(List<String> times, Map<Integer, List<ExpectedIncomeTotalVo>> maps) {
         List<Serie> list = new ArrayList<>();
+        for (Map.Entry<Integer, List<ExpectedIncomeTotalVo>> entry : maps.entrySet()) {
+            List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = entry.getValue();
+            Map<String, ExpectedIncomeTotalVo> mappedMovies = expectedIncomeTotalVos.stream().collect(
+                    Collectors.toMap(ExpectedIncomeTotalVo::getProfitDate, p -> p));
 
+            List<String> investmentIncomeData = new ArrayList<>();
+            for (String time : times) {
+                if (null == mappedMovies.get(time)) {
+                    investmentIncomeData.add("");
+                } else {
+                    investmentIncomeData.add(mappedMovies.get(time).getExpectedInterestIncomeMonth().toString());
+                }
+            }
 
-        List<String> investmentIncomeData = new ArrayList<>();
-        for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
-            investmentIncomeData.add(vo.getExpectedInterestIncomeMonth().toString());
+            Serie investmentIncome = new Serie();
+            investmentIncome.setName(entry.getKey() + "预期收益");
+            investmentIncome.setData(investmentIncomeData);
+            list.add(investmentIncome);
         }
-
-        Serie investmentIncome = new Serie();
-        investmentIncome.setName("预期收益");
-        investmentIncome.setData(investmentIncomeData);
-        list.add(investmentIncome);
         return list;
 
     }
