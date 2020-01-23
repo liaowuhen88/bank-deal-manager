@@ -45,4 +45,6 @@ public interface BankMyProductService {
 
     StackedLineChart expectedIncome(BankBillQuery bankBillQuery) throws Exception;
 
+    StackedLineChart expectedIncomeTotal(BankBillQuery bankBillQuery) throws Exception;
+
 }

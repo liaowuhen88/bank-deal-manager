@@ -79,5 +79,12 @@ public class BankMyProductController extends BaseController {
         return Result.sucess(list);
     }
 
+    @PostMapping("expectedIncomeTotal")
+    public Result<StackedLineChart> expectedIncomeTotal(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
+        StackedLineChart list = bankMyProductService.expectedIncomeTotal(bankBillQuery);
+
+        return Result.sucess(list);
+    }
+
 
 }

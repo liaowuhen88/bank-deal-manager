@@ -208,6 +208,74 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         return stackedLineChart;
     }
 
+    @Override
+    public StackedLineChart expectedIncomeTotal(BankBillQuery bankBillQuery) throws Exception {
+        //创建图表数据
+        StackedLineChart stackedLineChart = new StackedLineChart();
+        // 生成横轴数据
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(1);
+        List<BankMyProductVo> list = select(bankMyProductQueryVO);
+        //  key 基金id  key 日期  map 收益数组
+        Map<String, List<BigDecimal>> map = new HashMap();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
+        if (null != list) {
+            for (BankMyProductVo vo : list) {
+                // 设置为月份
+                logger.info("类型：{}", vo.getInterestPaymentMethod());
+                String start = sdf.format(vo.getProfitDate());
+                if ("月付".equals(vo.getInterestPaymentMethod())) {
+                    List<String> times = TimeUtils.getMonthBetween(vo.getProfitDate(), vo.getDueTime());
+                    //logger.info(JSON.toJSONString(times));
+                    if (null != times) {
+                        for (String time : times) {
+                            addExpectedInterestIncomeMonthTotal(map, time, vo);
+                        }
+                    }
+                    // 获取所有的月份  start---end
+                } else if ("季付".equals(vo.getInterestPaymentMethod())) {
+                    List<String> times = TimeUtils.getMonthBetween(vo.getProfitDate(), vo.getDueTime(), 3);
+                    logger.info("季付：{}", JSON.toJSONString(times));
+                    if (null != times) {
+                        for (String time : times) {
+                            addExpectedInterestIncomeMonthTotal(map, time, vo);
+                        }
+                    }
+                    // 获取所有的月份  start---end
+                } else if ("半年付".equals(vo.getInterestPaymentMethod())) {
+                    List<String> times = TimeUtils.getMonthBetween(vo.getProfitDate(), vo.getDueTime(), 6);
+                    logger.info("半年付：{}", JSON.toJSONString(times));
+                    if (null != times) {
+                        for (String time : times) {
+                            addExpectedInterestIncomeMonthTotal(map, time, vo);
+                        }
+                    }
+                    // 获取所有的月份  start---end
+                } else if ("一次性".equals(vo.getInterestPaymentMethod())) {
+                    addExpectedInterestIncomeMonthTotal(map, start, vo);
+                }
+            }
+        }
+
+        logger.info(JSON.toJSONString(map));
+        List<ExpectedIncomeTotalVo> vos = covertoList(map);
+        //List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
+        logger.info(JSON.toJSONString(vos));
+        List<String> times = initTimes(vos);
+        times = filter(times, bankBillQuery);
+        List<Serie> mapSeries = initSeries(times, vos);
+        Legend legend = initLegend(mapSeries);
+
+        XAxis xAxis = new XAxis();
+        xAxis.setData(times);
+        stackedLineChart.setXAxis(xAxis);
+        stackedLineChart.setSeries(mapSeries);
+        stackedLineChart.setLegend(legend);
+
+        return stackedLineChart;
+    }
+
     private List<ExpectedIncomeTotalVo> covertoList(Map<String, List<BigDecimal>> map) {
         List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = new ArrayList<>();
         for (Map.Entry<String, List<BigDecimal>> entry : map.entrySet()) {
@@ -281,6 +349,14 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         vos.add(vo.getExpectedInterestIncomeMonth());
     }
 
+    private void addExpectedInterestIncomeMonthTotal(Map<String, List<BigDecimal>> map, String time, BankMyProductVo vo) {
+        List<BigDecimal> vos = map.get(time);
+        if (null == vos) {
+            vos = new ArrayList<>();
+            map.put(time, vos);
+        }
+        vos.add(vo.getExpectedInterestIncomeMonth());
+    }
 
     public List<String> initTimes(Map<Integer, List<ExpectedIncomeTotalVo>> maps) {
         List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = new ArrayList<>();
@@ -288,6 +364,21 @@ public class BankMyProductServiceImpl implements BankMyProductService {
             expectedIncomeTotalVos.addAll(entry.getValue());
         }
         Set<String> set = new HashSet<>();
+        for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
+            set.add(vo.getProfitDate());
+        }
+        List<String> time = new ArrayList<>(set);
+        Collections.sort(time, (o1, o2) -> {
+            int i = o1.compareTo(o2);
+            return i;
+        });
+        return time;
+
+    }
+
+
+    public List<String> initTimes(List<ExpectedIncomeTotalVo> expectedIncomeTotalVos) {
+        HashSet set = new HashSet();
         for (ExpectedIncomeTotalVo vo : expectedIncomeTotalVos) {
             set.add(vo.getProfitDate());
         }
@@ -321,6 +412,29 @@ public class BankMyProductServiceImpl implements BankMyProductService {
             investmentIncome.setData(investmentIncomeData);
             list.add(investmentIncome);
         }
+        return list;
+
+    }
+
+    public List<Serie> initSeries(List<String> times, List<ExpectedIncomeTotalVo> expectedIncomeTotalVos) {
+        List<Serie> list = new ArrayList<>();
+        Map<String, ExpectedIncomeTotalVo> mappedMovies = expectedIncomeTotalVos.stream().collect(
+                Collectors.toMap(ExpectedIncomeTotalVo::getProfitDate, p -> p));
+
+        List<String> investmentIncomeData = new ArrayList<>();
+        for (String time : times) {
+            if (null == mappedMovies.get(time)) {
+                investmentIncomeData.add("");
+            } else {
+                investmentIncomeData.add(mappedMovies.get(time).getExpectedInterestIncomeMonth().toString());
+            }
+        }
+
+        Serie investmentIncome = new Serie();
+        investmentIncome.setName("总预期收益");
+        investmentIncome.setData(investmentIncomeData);
+        list.add(investmentIncome);
+
         return list;
 
     }
