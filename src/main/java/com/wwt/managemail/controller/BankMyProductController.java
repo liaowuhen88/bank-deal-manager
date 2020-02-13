@@ -80,11 +80,15 @@ public class BankMyProductController extends BaseController {
     }
 
     @PostMapping("expectedIncomeTotal")
-    public Result<StackedLineChart> expectedIncomeTotal(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
-        StackedLineChart list = bankMyProductService.expectedIncomeTotal(bankBillQuery);
+    public Result<StackedLineChart> expectedIncomeTotal(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        StackedLineChart list = bankMyProductService.expectedIncomeTotal(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
     }
 
-
+    @PostMapping("expectedIncomeTotalTable")
+    public Result<List<ExpectedIncomeTotalVo>> expectedIncomeTotalTable(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        List<ExpectedIncomeTotalVo> list = bankMyProductService.expectedIncomeTotalTable(expectedIncomeTotalTableVo);
+        return Result.sucess(list);
+    }
 }

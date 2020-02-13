@@ -11,6 +11,7 @@ import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -210,16 +211,38 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
-    public StackedLineChart expectedIncomeTotal(BankBillQuery bankBillQuery) throws Exception {
+    public StackedLineChart expectedIncomeTotal(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         //创建图表数据
         StackedLineChart stackedLineChart = new StackedLineChart();
+
+        //  key 基金id  key 日期  map 收益数组
+        List<ExpectedIncomeTotalVo> vos = getExpectedIncomeTotalVos(expectedIncomeTotalTableVo);
+        //List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
+        logger.info(JSON.toJSONString(vos));
+        List<String> times = initTimes(vos);
+        //times = filter(times, bankBillQuery);
+        List<Serie> mapSeries = initSeries(times, vos);
+        Legend legend = initLegend(mapSeries);
+
+        XAxis xAxis = new XAxis();
+        xAxis.setData(times);
+        stackedLineChart.setXAxis(xAxis);
+        stackedLineChart.setSeries(mapSeries);
+        stackedLineChart.setLegend(legend);
+
+        return stackedLineChart;
+    }
+
+    private List<ExpectedIncomeTotalVo> getExpectedIncomeTotalVos(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         // 生成横轴数据
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
         bankMyProductQueryVO.setState(1);
         List<BankMyProductVo> list = select(bankMyProductQueryVO);
+
         //  key 基金id  key 日期  map 收益数组
         Map<String, List<BigDecimal>> map = new HashMap();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");
+
 
         if (null != list) {
             for (BankMyProductVo vo : list) {
@@ -258,23 +281,24 @@ public class BankMyProductServiceImpl implements BankMyProductService {
                 }
             }
         }
-
         logger.info(JSON.toJSONString(map));
         List<ExpectedIncomeTotalVo> vos = covertoList(map);
-        //List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
-        logger.info(JSON.toJSONString(vos));
-        List<String> times = initTimes(vos);
-        times = filter(times, bankBillQuery);
-        List<Serie> mapSeries = initSeries(times, vos);
-        Legend legend = initLegend(mapSeries);
+        if (StringUtils.isNotEmpty(expectedIncomeTotalTableVo.getStartTime()) && StringUtils.isNotEmpty(expectedIncomeTotalTableVo.getEndTime())) {
+            vos = vos.stream()
+                    .filter((ExpectedIncomeTotalVo s) -> s.getProfitDate().compareTo(expectedIncomeTotalTableVo.getStartTime()) >= 0)
+                    .filter((ExpectedIncomeTotalVo s) -> s.getProfitDate().compareTo(expectedIncomeTotalTableVo.getEndTime()) <= 0)
+                    .collect(Collectors.toList());
+        }
+        return vos;
 
-        XAxis xAxis = new XAxis();
-        xAxis.setData(times);
-        stackedLineChart.setXAxis(xAxis);
-        stackedLineChart.setSeries(mapSeries);
-        stackedLineChart.setLegend(legend);
+    }
 
-        return stackedLineChart;
+    @Override
+    public List<ExpectedIncomeTotalVo> expectedIncomeTotalTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        List<ExpectedIncomeTotalVo> vos = getExpectedIncomeTotalVos(expectedIncomeTotalTableVo);
+
+
+        return vos;
     }
 
     private List<ExpectedIncomeTotalVo> covertoList(Map<String, List<BigDecimal>> map) {
