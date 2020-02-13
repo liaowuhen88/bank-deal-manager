@@ -1,74 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wwt.managemail.mapper.BankBillMapper">
-  <select id="query" parameterType="com.wwt.managemail.vo.BankBillQuery" resultType="com.wwt.managemail.vo.BankBillVo">
-    select * from bank_bill left join bank on bank.id = bank_bill.bank_card_id
-    where 1 = 1
-    <if test="transactionTypes != null and transactionTypes.length >0 ">
-      and bank_bill.transaction_type in
-      <foreach collection="transactionTypes" index="index" item="item" open="("
-               separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    <if test="userName != null and userName != '' ">
-      and bank.name = #{userName,jdbcType=VARCHAR}
-    </if>
-    <if test="bankName != null and bankName != '' ">
-      and bank.bank_name = #{bankName,jdbcType=VARCHAR}
-    </if>
-    <if test="bankCard != null and bankCard != '' ">
-      and bank.bank_card = #{bankCard,jdbcType=VARCHAR}
-    </if>
-    <if test="startTime != null ">
-      and bank_bill.create_time &gt;= #{startTime,jdbcType=DATE}
-    </if>
-    <if test="endTime != null">
-      and bank_bill.create_time &lt;= #{endTime,jdbcType=DATE}
-    </if>
-    <if test="myProductId != null">
-      and bank_bill.my_product_id = #{myProductId,jdbcType=INTEGER}
-    </if>
-    order by bank_bill.id desc
+    <select id="query" parameterType="com.wwt.managemail.vo.BankBillQuery"
+            resultType="com.wwt.managemail.vo.BankBillVo">
+        select bank_bill.*,bank.*,transfer_bank.name transfer_card_name ,transfer_bank.bank_card
+        transfer_card_num,transfer_bank.bank_name transfer_card_bank_name from bank_bill left join bank on bank.id =
+        bank_bill.bank_card_id
+        left join bank transfer_bank on transfer_bank.id = bank_bill.transfer_card
+        where 1 = 1
+        <if test="transactionTypes != null and transactionTypes.length >0 ">
+            and bank_bill.transaction_type in
+            <foreach collection="transactionTypes" index="index" item="item" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        <if test="userName != null and userName != '' ">
+            and bank.name = #{userName,jdbcType=VARCHAR}
+        </if>
+        <if test="bankName != null and bankName != '' ">
+            and bank.bank_name = #{bankName,jdbcType=VARCHAR}
+        </if>
+        <if test="bankCard != null and bankCard != '' ">
+            and bank.bank_card = #{bankCard,jdbcType=VARCHAR}
+        </if>
+        <if test="startTime != null ">
+            and bank_bill.create_time &gt;= #{startTime,jdbcType=DATE}
+        </if>
+        <if test="endTime != null">
+            and bank_bill.create_time &lt;= #{endTime,jdbcType=DATE}
+        </if>
+        <if test="myProductId != null">
+            and bank_bill.my_product_id = #{myProductId,jdbcType=INTEGER}
+        </if>
+        order by bank_bill.id desc
 
-  </select>
+    </select>
 
-  <select id="queryTotal" parameterType="com.wwt.managemail.vo.BankBillQuery"
-          resultType="com.wwt.managemail.vo.BankBillTotalVo">
-    select sum(transaction_amount) total_transaction_amount,transaction_type from bank_bill
-    where 1 = 1
-    <if test="startTime != null">
-      and transaction_time &gt;= #{startTime,jdbcType=DATE}
-    </if>
-    <if test="endTime != null">
-      and transaction_time &lt;= #{endTime,jdbcType=DATE}
-    </if>
-    <if test="transactionTypes != null">
-      and bank_bill.transaction_type in
-      <foreach collection="transactionTypes" index="index" item="item" open="("
-               separator="," close=")">
-        #{item}
-      </foreach>
-    </if>
-    group by transaction_type
+    <select id="queryTotal" parameterType="com.wwt.managemail.vo.BankBillQuery"
+            resultType="com.wwt.managemail.vo.BankBillTotalVo">
+        select sum(transaction_amount) total_transaction_amount,transaction_type from bank_bill
+        where 1 = 1
+        <if test="startTime != null">
+            and transaction_time &gt;= #{startTime,jdbcType=DATE}
+        </if>
+        <if test="endTime != null">
+            and transaction_time &lt;= #{endTime,jdbcType=DATE}
+        </if>
+        <if test="transactionTypes != null">
+            and bank_bill.transaction_type in
+            <foreach collection="transactionTypes" index="index" item="item" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
+        </if>
+        group by transaction_type
 
-  </select>
+    </select>
 
 
-  <select id="totalByMonth" parameterType="com.wwt.managemail.vo.BankBillQuery"
-          resultType="com.wwt.managemail.vo.BankBillTotalVo">
-    select DATE_FORMAT(transaction_time,'%Y-%m') as time,sum(transaction_amount)
-    total_transaction_amount,transaction_type from bank_bill
-    where 1 = 1
-    <if test="startTime != null">
-      and transaction_time &gt;= #{startTime,jdbcType=DATE}
-    </if>
-    <if test="endTime != null">
-      and transaction_time &lt;= #{endTime,jdbcType=DATE}
-    </if>
-    group by time ,transaction_type
+    <select id="totalByMonth" parameterType="com.wwt.managemail.vo.BankBillQuery"
+            resultType="com.wwt.managemail.vo.BankBillTotalVo">
+        select DATE_FORMAT(transaction_time,'%Y-%m') as time,sum(transaction_amount)
+        total_transaction_amount,transaction_type from bank_bill
+        where 1 = 1
+        <if test="startTime != null">
+            and transaction_time &gt;= #{startTime,jdbcType=DATE}
+        </if>
+        <if test="endTime != null">
+            and transaction_time &lt;= #{endTime,jdbcType=DATE}
+        </if>
+        group by time ,transaction_type
 
-  </select>
+    </select>
 
 
 </mapper>

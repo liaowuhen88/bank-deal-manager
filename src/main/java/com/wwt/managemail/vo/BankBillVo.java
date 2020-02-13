@@ -31,6 +31,14 @@ public class BankBillVo {
 
     private String myProductId;
 
+    private String transferCard;
+
+    private String transferCardName;
+
+    private String transferCardNum;
+
+    private String transferCardBankName;
+
     public String getTransactionTypeMsg() {
         return TransactionTypeEnum.getByCode(transactionType).getMsg();
     }

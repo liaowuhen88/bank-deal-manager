@@ -126,6 +126,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public List<BankMyProductVo> expireProduct() {
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
         bankMyProductQueryVO.setExpireProductTime(new Date());
+        bankMyProductQueryVO.setState(1);
         List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
         return getBankMyProductVos(list);
     }
