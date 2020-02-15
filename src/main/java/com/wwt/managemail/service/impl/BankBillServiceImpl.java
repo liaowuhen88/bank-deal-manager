@@ -80,7 +80,13 @@ public class BankBillServiceImpl implements BankBillService {
     }
 
     @Override
-    public StackedLineChart totalByMonth(BankBillQuery bankBillQuery) throws Exception {
+    public List<BankBillTotalVo> totalByMonth(BankBillQuery bankBillQuery) {
+        return bankBillMapper.totalByMonth(bankBillQuery);
+    }
+
+
+    @Override
+    public StackedLineChart totalByMonthEchart(BankBillQuery bankBillQuery) throws Exception {
         if (null == bankBillQuery.getStartTime() && null == bankBillQuery.getEndTime()) {
             bankBillQuery.setStartTime(TimeUtils.getCurrentYeadFirstDay());
             bankBillQuery.setEndTime(new Date());
@@ -98,7 +104,7 @@ public class BankBillServiceImpl implements BankBillService {
         stackedLineChart.setSeries(mapSeries);
         stackedLineChart.setLegend(legend);
 
-        List<BankBillTotalVo> list = bankBillMapper.totalByMonth(bankBillQuery);
+        List<BankBillTotalVo> list = totalByMonth(bankBillQuery);
         logger.info(JSON.toJSONString(list));
         Map<Integer, Map<String, BankBillTotalVo>> map = getBankBillTotalVoMap(list);
         logger.info(JSON.toJSONString(map));

@@ -8,6 +8,7 @@ import com.wwt.managemail.vo.BankBillVo;
 import com.wwt.managemail.vo.StackedLineChart;
 
 import java.util.List;
+import java.util.Map;
 
 public interface BankBillService {
     int insertSelective(BankBill bank);
@@ -20,5 +21,9 @@ public interface BankBillService {
 
     List<BankBillTotalVo> queryCurrentYearTotal();
 
-    StackedLineChart totalByMonth(BankBillQuery bankBillQuery) throws Exception;
+    List<BankBillTotalVo> totalByMonth(BankBillQuery bankBillQuery);
+
+    Map<Integer, Map<String, BankBillTotalVo>> getBankBillTotalVoMap(List<BankBillTotalVo> list);
+
+    StackedLineChart totalByMonthEchart(BankBillQuery bankBillQuery) throws Exception;
 }

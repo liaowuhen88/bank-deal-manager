@@ -43,11 +43,13 @@ public interface BankMyProductService {
      */
     List<BankMyProductVo> expireInterest();
 
-    StackedLineChart expectedIncome(BankBillQuery bankBillQuery) throws Exception;
+    StackedLineChart expectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
+
+    List<List<String>> expectedIncomeTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
     StackedLineChart expectedIncomeTotal(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
-    List<ExpectedIncomeTotalVo> expectedIncomeTotalTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
+    List<List<String>> expectedIncomeTotalTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
 
 }

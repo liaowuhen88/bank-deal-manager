@@ -7,6 +7,7 @@ import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.BeanUtil;
+import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -73,22 +75,45 @@ public class BankMyProductController extends BaseController {
     }
 
     @PostMapping("expectedIncome")
-    public Result<StackedLineChart> expectedIncome(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
-        StackedLineChart list = bankMyProductService.expectedIncome(bankBillQuery);
+    public Result<StackedLineChart> expectedIncome(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            expectedIncomeTotalTableVo.setEndTime(new Date());
+        }
+        StackedLineChart list = bankMyProductService.expectedIncome(expectedIncomeTotalTableVo);
+
+        return Result.sucess(list);
+    }
+
+    @PostMapping("expectedIncomeTable")
+    public Result<List<List<String>>> expectedIncomeTable(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            expectedIncomeTotalTableVo.setEndTime(new Date());
+        }
+        List<List<String>> list = bankMyProductService.expectedIncomeTable(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
     }
 
     @PostMapping("expectedIncomeTotal")
     public Result<StackedLineChart> expectedIncomeTotal(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            expectedIncomeTotalTableVo.setEndTime(new Date());
+        }
         StackedLineChart list = bankMyProductService.expectedIncomeTotal(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
     }
 
     @PostMapping("expectedIncomeTotalTable")
-    public Result<List<ExpectedIncomeTotalVo>> expectedIncomeTotalTable(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        List<ExpectedIncomeTotalVo> list = bankMyProductService.expectedIncomeTotalTable(expectedIncomeTotalTableVo);
+    public Result<List<List<String>>> expectedIncomeTotalTable(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            expectedIncomeTotalTableVo.setEndTime(new Date());
+        }
+        List<List<String>> list = bankMyProductService.expectedIncomeTotalTable(expectedIncomeTotalTableVo);
         return Result.sucess(list);
     }
 }

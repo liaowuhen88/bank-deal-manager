@@ -46,7 +46,7 @@ public class BankBillController extends BaseController {
 
     @PostMapping("totalByMonth")
     public Result<StackedLineChart> totalByMonth(@Validated @RequestBody BankBillQuery bankBillQuery) throws Exception {
-        StackedLineChart list = billService.totalByMonth(bankBillQuery);
+        StackedLineChart list = billService.totalByMonthEchart(bankBillQuery);
         return Result.sucess(list);
     }
 }
