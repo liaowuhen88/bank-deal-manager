@@ -145,7 +145,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public StackedLineChart expectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         //创建图表数据
         StackedLineChart stackedLineChart = new StackedLineChart();
-        Map<Integer, Map<String, List<BigDecimal>>> map = getexpectedIncome();
+        Map<Integer, Map<String, List<BigDecimal>>> map = getexpectedIncome(expectedIncomeTotalTableVo);
 
         Map<Integer, List<ExpectedIncomeTotalVo>> maps = coverto(map);
 
@@ -172,7 +172,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         List<String> times = TimeUtils.getMonthBetween(expectedIncomeTotalTableVo.getStartTime(), expectedIncomeTotalTableVo.getEndTime());
 
         // 每个产品，对应每个日期
-        Map<Integer, Map<String, List<BigDecimal>>> maps = getexpectedIncome();
+        Map<Integer, Map<String, List<BigDecimal>>> maps = getexpectedIncome(expectedIncomeTotalTableVo);
         for (Map.Entry<Integer, Map<String, List<BigDecimal>>> entry : maps.entrySet()) {
             List<String> row = new ArrayList<>();
             row.add(entry.getKey().toString());
@@ -221,7 +221,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         return summary;
     }
 
-    private Map<Integer, Map<String, List<BigDecimal>>> getexpectedIncome() throws Exception {
+    private Map<Integer, Map<String, List<BigDecimal>>> getexpectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         // 生成横轴数据
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
         bankMyProductQueryVO.setState(1);
@@ -280,13 +280,12 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public StackedLineChart expectedIncomeTotal(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         //创建图表数据
         StackedLineChart stackedLineChart = new StackedLineChart();
-
+        List<String> times = TimeUtils.getMonthBetween(expectedIncomeTotalTableVo.getStartTime(), expectedIncomeTotalTableVo.getEndTime());
         //  key 基金id  key 日期  map 收益数组
         Map<String, List<BigDecimal>> map = getExpectedIncomeTotalVos(expectedIncomeTotalTableVo);
         List<ExpectedIncomeTotalVo> vos = covertoList(map);
         //List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = bankMyProductMapper.expectedIncome();
         logger.info(JSON.toJSONString(vos));
-        List<String> times = initTimes(vos);
         //times = filter(times, bankBillQuery);
         List<Serie> mapSeries = initSeries(times, vos);
         Legend legend = initLegend(mapSeries);
