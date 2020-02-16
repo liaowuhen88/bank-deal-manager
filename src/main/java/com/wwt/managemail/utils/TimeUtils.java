@@ -24,7 +24,19 @@ public class TimeUtils {
     public static List<String> getMonthBetween(Date minDate, Date maxDate) throws Exception {
 
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
-        return getMonthBetween(minDate, maxDate, sdf);
+        ArrayList<String> result = new ArrayList<>();
+        Calendar min = Calendar.getInstance();
+        Calendar max = Calendar.getInstance();
+
+        min.setTime(minDate);
+        max.setTime(maxDate);
+
+        Calendar curr = min;
+        while (curr.before(max) || curr.equals(max)) {
+            result.add(sdf.format(curr.getTime()));
+            curr.add(Calendar.MONTH, 1);
+        }
+        return result;
     }
 
 
@@ -63,26 +75,4 @@ public class TimeUtils {
         return result;
     }
 
-    /**
-     * @param minDate 最小时间  2015-01
-     * @param maxDate 最大时间 2015-10
-     *                间隔时间
-     * @return 日期集合 格式为 年-月
-     * @throws Exception
-     */
-    public static List<String> getMonthBetween(Date minDate, Date maxDate, int between) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
-        return getMonthBetween(minDate, maxDate, sdf, between);
-    }
-
-    /**
-     * @param minDate 最小时间  2015-01
-     * @param maxDate 最大时间 2015-10
-     * @return 日期集合 格式为 年-月
-     * @throws Exception
-     */
-    public static List<String> getMonthBetween(String minDate, String maxDate) throws Exception {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM");//格式化为年月
-        return getMonthBetween(sdf.parse(minDate), sdf.parse(maxDate));
-    }
 }
