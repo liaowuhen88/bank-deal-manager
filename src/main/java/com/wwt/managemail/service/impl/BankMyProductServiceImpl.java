@@ -296,7 +296,6 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public List<ExpectedIncomePlanVo> getExpectedIncomePlan() throws Exception {
         // 获取产品数据
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setState(1);
         List<BankMyProductVo> list = select(bankMyProductQueryVO);
         return getExpectedIncomePlan(list);
     }
@@ -402,7 +401,6 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
         // 获取所有理财产品
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setState(1);
         List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
 
         List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(bankMyProductVos);
