@@ -43,6 +43,14 @@ public interface BankMyProductService {
      */
     List<BankMyProductVo> expireInterest();
 
+    /**
+     * 获取还款计划
+     *
+     * @return
+     * @throws Exception
+     */
+    List<ExpectedIncomePlanVo> getExpectedIncomePlan() throws Exception;
+
     StackedLineChart expectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
     List<List<String>> expectedIncomeTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;

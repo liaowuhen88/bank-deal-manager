@@ -74,6 +74,17 @@ public class BankMyProductController extends BaseController {
         return Result.sucess(list);
     }
 
+    @PostMapping("getExpectedIncomePlan")
+    public Result<List<ExpectedIncomePlanVo>> getExpectedIncomePlan(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            expectedIncomeTotalTableVo.setEndTime(new Date());
+        }
+        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan();
+
+        return Result.sucess(list);
+    }
+
     @PostMapping("expectedIncome")
     public Result<StackedLineChart> expectedIncome(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
