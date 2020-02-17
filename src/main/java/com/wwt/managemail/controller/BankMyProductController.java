@@ -67,6 +67,15 @@ public class BankMyProductController extends BaseController {
         return Result.sucess(list);
     }
 
+    @PostMapping("selectByPrimaryKey")
+    public Result<BankMyProductVo> selectByPrimaryKey(@RequestBody IdVo idVo) {
+        BankMyProduct list = bankMyProductService.selectByPrimaryKey(idVo.getId());
+
+        return Result.sucess(list);
+    }
+
+
+
     @PostMapping("selectInterestPaymentMethod")
     public Result<List<String>> selectInterestPaymentMethod() {
         List<String> list = bankMyProductService.selectInterestPaymentMethod();
@@ -80,7 +89,7 @@ public class BankMyProductController extends BaseController {
             expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
             expectedIncomeTotalTableVo.setEndTime(new Date());
         }
-        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan();
+        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
     }

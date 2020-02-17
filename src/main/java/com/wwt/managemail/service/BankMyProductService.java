@@ -28,6 +28,8 @@ public interface BankMyProductService {
 
     int income(ProductTransaction productTransaction);
 
+    BankMyProduct selectByPrimaryKey(Integer id);
+
     List<BankMyProduct> selectAll();
 
     List<BankMyProductVo> select(BankMyProductQueryVO bankMyProductQueryVO);
@@ -49,9 +51,9 @@ public interface BankMyProductService {
      * @return
      * @throws Exception
      */
-    List<ExpectedIncomePlanVo> getExpectedIncomePlan() throws Exception;
+    List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
-    List<ExpectedIncomePlanVo> getExpectedIncomePlan(List<BankMyProductVo> list) throws Exception;
+    List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo, List<BankMyProductVo> list) throws Exception;
 
     StackedLineChart expectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 

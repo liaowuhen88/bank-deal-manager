@@ -9,6 +9,7 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.utils.MoneyUtills;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
 import org.apache.commons.lang3.StringUtils;
@@ -107,6 +108,11 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
+    public BankMyProduct selectByPrimaryKey(Integer id) {
+        return bankMyProductMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public List<BankMyProduct> selectAll() {
         return bankMyProductMapper.selectAll();
     }
@@ -170,12 +176,25 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         List<List<String>> list = new ArrayList<>();
         // 获取第一行数据
         List<String> times = TimeUtils.getMonthBetween(expectedIncomeTotalTableVo.getStartTime(), expectedIncomeTotalTableVo.getEndTime());
-
+        //获取理财产品
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(1);
+        List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
+        Map<Integer, BankMyProductVo> planVoMap = bankMyProductVos.stream().collect(Collectors.toMap(BankMyProductVo::getId, account -> account));
+        //获取收息计划
+        List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(expectedIncomeTotalTableVo, bankMyProductVos);
         // 每个产品，对应每个日期
-        Map<Integer, Map<String, List<BigDecimal>>> maps = getexpectedIncome(expectedIncomeTotalTableVo);
+        Map<Integer, Map<String, List<BigDecimal>>> maps = getexpectedIncome(planVos);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         for (Map.Entry<Integer, Map<String, List<BigDecimal>>> entry : maps.entrySet()) {
             List<String> row = new ArrayList<>();
-            row.add(entry.getKey().toString());
+            Integer id = entry.getKey();
+            row.add(id.toString());
+            row.add(MoneyUtills.toMoney(planVoMap.get(id).getInvestmentAmount()));
+            row.add(sdf.format(planVoMap.get(id).getBuyingTime()));
+            row.add(sdf.format(planVoMap.get(id).getDueTime()));
+            row.add(planVoMap.get(id).getInterestPaymentMethod());
             Map<String, List<BigDecimal>> value = entry.getValue();
             // 单条记录合计
             BigDecimal totalAll = new BigDecimal(0);
@@ -197,18 +216,26 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
 
         times.add(0, "产品编号");
+        times.add(1, "投资金额");
+        times.add(2, "买入时间");
+        times.add(3, "到期时间");
+        times.add(4, "付息方式");
         times.add(times.size(), "合计");
         list.add(0, times);
         //计算最后一行合计
-        List<String> summary = getsummary(list, times.size());
+        List<String> summary = getsummary(list, 5, times.size());
         list.add(summary);
         return list;
     }
 
-    private List<String> getsummary(List<List<String>> list, int count) {
+    private List<String> getsummary(List<List<String>> list, int start, int count) {
         List<String> summary = new ArrayList<>();
         summary.add("合计");
-        for (int i = 1; i < count; i++) {
+        summary.add("");
+        summary.add("");
+        summary.add("");
+        summary.add("");
+        for (int i = start; i < count; i++) {
             BigDecimal total = new BigDecimal(0);
             for (int j = 1; j < list.size(); j++) {
                 List<String> row = list.get(j);
@@ -216,13 +243,18 @@ public class BankMyProductServiceImpl implements BankMyProductService {
                     total = total.add(new BigDecimal(row.get(i)));
                 }
             }
-            summary.add(total.toString());
+            summary.add(MoneyUtills.toMoney(total));
         }
         return summary;
     }
 
     private Map<Integer, Map<String, List<BigDecimal>>> getexpectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        List<ExpectedIncomePlanVo> list = getExpectedIncomePlan();
+        List<ExpectedIncomePlanVo> list = getExpectedIncomePlan(expectedIncomeTotalTableVo);
+        return getexpectedIncome(list);
+
+    }
+
+    private Map<Integer, Map<String, List<BigDecimal>>> getexpectedIncome(List<ExpectedIncomePlanVo> list) throws Exception {
         //  key 基金id  key 日期  map 收益数组
         Map<Integer, Map<String, List<BigDecimal>>> map = new HashMap();
 
@@ -240,8 +272,10 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
     }
 
+
+
     @Override
-    public List<ExpectedIncomePlanVo> getExpectedIncomePlan(List<BankMyProductVo> list) throws Exception {
+    public List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo, List<BankMyProductVo> list) throws Exception {
         List<ExpectedIncomePlanVo> planVos = new ArrayList<>();
 
         //  key 基金id  key 日期  map 收益数组
@@ -287,17 +321,28 @@ public class BankMyProductServiceImpl implements BankMyProductService {
                     planVos.add(planVo);
                 }
             }
+
+            if (null != expectedIncomeTotalTableVo.getStartTime() && null != expectedIncomeTotalTableVo.getEndTime()) {
+                String sTime = sdf.format(expectedIncomeTotalTableVo.getStartTime());
+                String eTime = sdf.format(expectedIncomeTotalTableVo.getEndTime());
+                planVos = planVos.stream()
+                        .filter((ExpectedIncomePlanVo s) -> s.getTime().compareTo(sTime) >= 0)
+                        .filter((ExpectedIncomePlanVo s) -> s.getTime().compareTo(eTime) <= 0)
+                        .collect(Collectors.toList());
+            }
+
         }
         return planVos;
 
     }
 
     @Override
-    public List<ExpectedIncomePlanVo> getExpectedIncomePlan() throws Exception {
+    public List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         // 获取产品数据
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(1);
         List<BankMyProductVo> list = select(bankMyProductQueryVO);
-        return getExpectedIncomePlan(list);
+        return getExpectedIncomePlan(expectedIncomeTotalTableVo, list);
     }
 
     private ExpectedIncomePlanVo getExpectedIncomePlanVo(String time, BankMyProductVo vo) {
@@ -333,7 +378,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
     private Map<String, List<BigDecimal>> getExpectedIncomeTotalVos(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         // 生成横轴数据
-        List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan();
+        List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(expectedIncomeTotalTableVo);
         return getExpectedIncomeTotalVos(planVos);
 
     }
@@ -401,9 +446,10 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
         // 获取所有理财产品
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(1);
         List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
 
-        List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(bankMyProductVos);
+        List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(expectedIncomeTotalTableVo, bankMyProductVos);
 
         // 每个产品，对应每个日期,预期收益
         Map<String, List<BigDecimal>> maps = getExpectedIncomeTotalVos(planVos);
