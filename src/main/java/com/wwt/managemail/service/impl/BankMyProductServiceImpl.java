@@ -541,6 +541,75 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         return list;
     }
 
+    @Override
+    public List<AnalysisTotalVo> getAnalysisTotalVo(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        List<AnalysisTotalVo> list = new ArrayList<>();
+        // 获取第一行数据
+        List<String> times = TimeUtils.getMonthBetween(expectedIncomeTotalTableVo.getStartTime(), expectedIncomeTotalTableVo.getEndTime());
+
+        // 获取所有理财产品
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(1);
+        List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
+
+        List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(expectedIncomeTotalTableVo, bankMyProductVos);
+
+        // 每个产品，对应每个日期,预期收益
+        Map<String, List<BigDecimal>> maps = getExpectedIncomeTotalVos(planVos);
+        // 每个产品，对应每个日期,本金赎回
+        Map<String, List<BigDecimal>> investmentAmountMaps = getInvestmentAmount(bankMyProductVos);
+
+        // 获取实际收益
+        BankBillQuery bankBillQuery = new BankBillQuery();
+        List<BankBillTotalVo> bankBillTotalVos = bankBillService.totalByMonth(bankBillQuery);
+        Map<Integer, Map<String, BankBillTotalVo>> map = bankBillService.getBankBillTotalVoMap(bankBillTotalVos);
+        Map<String, BankBillTotalVo> bankBillTotalVoMap = map.get(TransactionTypeEnum.investmentIncome.getCode());
+        // 获取实际理财赎回
+        Map<String, BankBillTotalVo> investmentRedeemPrincipalMap = map.get(TransactionTypeEnum.investment_redeem_principal.getCode());
+        for (String time : times) {
+            AnalysisTotalVo vo = new AnalysisTotalVo();
+            vo.setTime(time);
+            // 获取当前时间对应数据，预期收益
+            List<BigDecimal> vos = maps.get(time);
+            BigDecimal total = new BigDecimal(0);
+            if (null != vos) {
+                for (BigDecimal expectedInterestIncomeMonth : vos) {
+                    total = total.add(expectedInterestIncomeMonth);
+                }
+            }
+
+            vo.setExpectedInterestIncome(total);
+            // 预期本金
+            List<BigDecimal> investmentAmounts = investmentAmountMaps.get(time);
+            BigDecimal totalInvestmentAmounts = new BigDecimal(0);
+            if (null != investmentAmounts) {
+                for (BigDecimal expectedInterestIncomeMonth : investmentAmounts) {
+                    totalInvestmentAmounts = totalInvestmentAmounts.add(expectedInterestIncomeMonth);
+                }
+            }
+            vo.setInvestmentAmount(totalInvestmentAmounts);
+
+            // 实际收益
+            BankBillTotalVo bankBillTotalVo = bankBillTotalVoMap.get(time);
+            if (null == bankBillTotalVo) {
+                vo.setInvestmentIncome(new BigDecimal("0"));
+            } else {
+                vo.setInvestmentIncome(bankBillTotalVo.getTotalTransactionAmount());
+            }
+            //赎回本金
+            BankBillTotalVo investmentRedeemPrincipal = investmentRedeemPrincipalMap.get(time);
+            if (null == investmentRedeemPrincipal) {
+                vo.setInvestmentRedeemPrincipal(new BigDecimal("0"));
+            } else {
+                vo.setInvestmentRedeemPrincipal(investmentRedeemPrincipal.getTotalTransactionAmount());
+            }
+
+            list.add(vo);
+        }
+        return list;
+
+    }
+
     private List<ExpectedIncomeTotalVo> covertoList(Map<String, List<BigDecimal>> map) {
         List<ExpectedIncomeTotalVo> expectedIncomeTotalVos = new ArrayList<>();
         for (Map.Entry<String, List<BigDecimal>> entry : map.entrySet()) {

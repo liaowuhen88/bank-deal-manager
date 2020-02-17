@@ -141,4 +141,15 @@ public class BankMyProductController extends BaseController {
         List<List<String>> list = bankMyProductService.expectedIncomeTotalTable(expectedIncomeTotalTableVo);
         return Result.sucess(list);
     }
+
+    @PostMapping("getAnalysisTotalVo")
+    public Result<List<AnalysisTotalVo>> getAnalysisTotalVo(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+            expectedIncomeTotalTableVo.setEndTime(new Date());
+        }
+        List<AnalysisTotalVo> list = bankMyProductService.getAnalysisTotalVo(expectedIncomeTotalTableVo);
+        return Result.sucess(list);
+    }
+
 }

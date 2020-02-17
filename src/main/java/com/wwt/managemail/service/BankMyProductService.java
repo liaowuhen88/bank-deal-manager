@@ -63,5 +63,10 @@ public interface BankMyProductService {
 
     List<List<String>> expectedIncomeTotalTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
+    List<AnalysisTotalVo> getAnalysisTotalVo(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
+
+
+
+
 
 }
