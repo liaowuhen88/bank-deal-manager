@@ -1,6 +1,7 @@
 package com.wwt.managemail.controller;
 
 import com.wwt.managemail.common.Result;
+import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.enums.TransactionTypeEnum;
 import com.wwt.managemail.service.BankMyProductService;
@@ -9,6 +10,7 @@ import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.BeanUtil;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -69,9 +71,12 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("selectByPrimaryKey")
     public Result<BankMyProductVo> selectByPrimaryKey(@RequestBody IdVo idVo) {
-        BankMyProduct list = bankMyProductService.selectByPrimaryKey(idVo.getId());
-
-        return Result.sucess(list);
+        BankMyProduct bankMyProduct = bankMyProductService.selectByPrimaryKey(idVo.getId());
+        BankMyProductVo vo = new BankMyProductVo();
+        BeanUtils.copyProperties(bankMyProduct, vo);
+        Bank bank = bankService.selectById(bankMyProduct.getBankCardId());
+        vo.setBank(bank);
+        return Result.sucess(vo);
     }
 
 
