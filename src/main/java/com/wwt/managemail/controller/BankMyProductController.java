@@ -4,6 +4,7 @@ import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankMyProduct;
 import com.wwt.managemail.enums.TransactionTypeEnum;
+import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -32,7 +35,8 @@ public class BankMyProductController extends BaseController {
     BankService bankService;
     @Autowired
     BankProductService bankProductService;
-
+    @Autowired
+    BankBillService billService;
     @PostMapping("buy")
     public Result<Integer> buy(@RequestBody BankMyProduct bankMyProduct) {
         int code = bankMyProductService.buy(bankMyProduct);
@@ -104,6 +108,28 @@ public class BankMyProductController extends BaseController {
         init(expectedIncomeTotalTableVo);
         List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(expectedIncomeTotalTableVo);
 
+        return Result.sucess(list);
+    }
+
+    @PostMapping("getExpectedIncomePlanAndReal")
+    public Result<List<ExpectedIncomePlanVo>> getExpectedIncomePlanAndReal(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        init(expectedIncomeTotalTableVo);
+        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(expectedIncomeTotalTableVo);
+        QueryByTimeVo queryByTimeVo = new QueryByTimeVo();
+        queryByTimeVo.setTime(expectedIncomeTotalTableVo.getTime());
+        queryByTimeVo.setTransactionTypes(new int[]{6});
+        List<BankBillVo> bankBillVos = billService.queryNoPage(queryByTimeVo);
+        if (null != bankBillVos) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            for (BankBillVo vo : bankBillVos) {
+                ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
+                planVo.setId(Integer.valueOf(vo.getMyProductId()));
+                planVo.setTime(sdf.format(vo.getTransactionTime()));
+                planVo.setRealInterestIncome(vo.getTransactionAmount());
+                list.add(planVo);
+            }
+        }
+        list.sort(Comparator.comparing(ExpectedIncomePlanVo::getId));
         return Result.sucess(list);
     }
 

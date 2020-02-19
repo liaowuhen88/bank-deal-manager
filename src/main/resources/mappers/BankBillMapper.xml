@@ -25,10 +25,10 @@
             and bank.bank_card = #{bankCard,jdbcType=VARCHAR}
         </if>
         <if test="startTime != null ">
-            and bank_bill.create_time &gt;= #{startTime,jdbcType=DATE}
+            and bank_bill.transaction_time &gt;= #{startTime,jdbcType=DATE}
         </if>
         <if test="endTime != null">
-            and bank_bill.create_time &lt;= #{endTime,jdbcType=DATE}
+            and bank_bill.transaction_time &lt;= #{endTime,jdbcType=DATE}
         </if>
         <if test="myProductId != null">
             and bank_bill.my_product_id = #{myProductId,jdbcType=INTEGER}

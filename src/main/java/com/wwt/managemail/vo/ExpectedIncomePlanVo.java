@@ -17,6 +17,11 @@ public class ExpectedIncomePlanVo {
      * 收息金额
      */
     private BigDecimal expectedInterestIncomeMonth;
+
+    /**
+     * 收息金额
+     */
+    private BigDecimal realInterestIncome;
     /**
      * 产品id
      */
