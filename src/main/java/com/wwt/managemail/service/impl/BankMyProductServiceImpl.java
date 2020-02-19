@@ -132,7 +132,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public List<BankMyProductVo> expireProduct() {
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
         bankMyProductQueryVO.setExpireProductTime(new Date());
-        bankMyProductQueryVO.setState(1);
+        bankMyProductQueryVO.setState(new Integer[]{1});
         List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
         return getBankMyProductVos(list);
     }
@@ -141,7 +141,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public List<BankMyProductVo> expireInterest() {
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
         bankMyProductQueryVO.setExpireInterestTime(new Date());
-        bankMyProductQueryVO.setState(1);
+        bankMyProductQueryVO.setState(new Integer[]{1});
         List<BankMyProduct> list = bankMyProductMapper.selectByBankMyProductQueryVO(bankMyProductQueryVO);
         return getBankMyProductVos(list);
     }
@@ -178,7 +178,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         List<String> times = TimeUtils.getMonthBetween(expectedIncomeTotalTableVo.getStartTime(), expectedIncomeTotalTableVo.getEndTime());
         //获取理财产品
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setState(1);
+        bankMyProductQueryVO.setState(new Integer[]{1, 2});
         List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
         Map<Integer, BankMyProductVo> planVoMap = bankMyProductVos.stream().collect(Collectors.toMap(BankMyProductVo::getId, account -> account));
         //获取收息计划
@@ -340,7 +340,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     public List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         // 获取产品数据
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setState(1);
+        bankMyProductQueryVO.setState(new Integer[]{1, 2});
         List<BankMyProductVo> list = select(bankMyProductQueryVO);
         return getExpectedIncomePlan(expectedIncomeTotalTableVo, list);
     }
@@ -446,7 +446,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
         // 获取所有理财产品
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setState(1);
+        bankMyProductQueryVO.setState(new Integer[]{1, 2});
         List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
 
         List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(expectedIncomeTotalTableVo, bankMyProductVos);
@@ -549,7 +549,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
 
         // 获取所有理财产品
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
-        bankMyProductQueryVO.setState(1);
+        bankMyProductQueryVO.setState(new Integer[]{1, 2});
         List<BankMyProductVo> bankMyProductVos = select(bankMyProductQueryVO);
 
         List<ExpectedIncomePlanVo> planVos = getExpectedIncomePlan(expectedIncomeTotalTableVo, bankMyProductVos);

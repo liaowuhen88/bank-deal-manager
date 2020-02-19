@@ -43,8 +43,12 @@
         <if test="userName != null and userName != ''">
             and bank.name = #{userName,jdbcType=VARCHAR}
         </if>
-        <if test="state != null">
-            and bank_my_product.state = #{state,jdbcType=VARCHAR}
+        <if test="state != null and state.length >0 ">
+            and bank_my_product.state in
+            <foreach collection="state" index="index" item="item" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
         </if>
         <if test="expireProductTime != null">
             and bank_my_product.due_time &lt;= #{expireProductTime,jdbcType=DATE}
