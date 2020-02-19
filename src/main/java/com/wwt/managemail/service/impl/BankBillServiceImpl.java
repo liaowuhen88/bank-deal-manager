@@ -63,6 +63,17 @@ public class BankBillServiceImpl implements BankBillService {
     }
 
     @Override
+    public List<BankBillVo> queryNoPage(QueryByTimeVo queryByTimeVo) {
+        BankBillQuery bankBillQuery = new BankBillQuery();
+        bankBillQuery.setTransactionTypes(queryByTimeVo.getTransactionTypes());
+        int month = Integer.valueOf(queryByTimeVo.getTime().substring(5, 7));
+        logger.info("{}:{}", queryByTimeVo.getTime(), month);
+        bankBillQuery.setStartTime(TimeUtils.getFirstDayOfMonth(month));
+        bankBillQuery.setEndTime(TimeUtils.getLastDayOfMonth(month));
+        return bankBillMapper.query(bankBillQuery);
+    }
+
+    @Override
     public BankBillVo queryLaste(BankBillQuery bankBillQuery) {
         Page<BankBillVo> list = bankBillMapper.query(bankBillQuery);
         if (null != list) {

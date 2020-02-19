@@ -6,6 +6,7 @@ import com.wwt.managemail.entity.BankBill;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.vo.BankBillQuery;
 import com.wwt.managemail.vo.BankBillVo;
+import com.wwt.managemail.vo.QueryByTimeVo;
 import com.wwt.managemail.vo.StackedLineChart;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -36,6 +37,14 @@ public class BankBillController extends BaseController {
         result.setTotal(list.getTotal());
         return result;
     }
+
+    @PostMapping("queryByTime")
+    public Result<List<BankBillVo>> queryByTime(@Validated @RequestBody QueryByTimeVo queryByTimeVo) {
+        List<BankBillVo> list = billService.queryNoPage(queryByTimeVo);
+        Result result = Result.sucess(list);
+        return result;
+    }
+
 
     @PostMapping("queryLaste")
     public Result<List<BankBillVo>> queryLaste(@Validated @RequestBody BankBillQuery bankBillQuery) {

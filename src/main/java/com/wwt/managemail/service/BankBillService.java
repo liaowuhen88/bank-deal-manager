@@ -2,10 +2,7 @@ package com.wwt.managemail.service;
 
 import com.github.pagehelper.Page;
 import com.wwt.managemail.entity.BankBill;
-import com.wwt.managemail.vo.BankBillQuery;
-import com.wwt.managemail.vo.BankBillTotalVo;
-import com.wwt.managemail.vo.BankBillVo;
-import com.wwt.managemail.vo.StackedLineChart;
+import com.wwt.managemail.vo.*;
 
 import java.util.List;
 import java.util.Map;
@@ -16,6 +13,8 @@ public interface BankBillService {
     int transaction(BankBill bank);
 
     Page<BankBillVo> query(BankBillQuery bankBillQuery);
+
+    List<BankBillVo> queryNoPage(QueryByTimeVo queryByTimeVo);
 
     BankBillVo queryLaste(BankBillQuery bankBillQuery);
 

@@ -10,6 +10,7 @@ import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.BeanUtil;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -54,6 +55,7 @@ public class BankMyProductController extends BaseController {
         int code = bankMyProductService.update(bankMyProduct);
         return Result.sucess(code);
     }
+
     /**
      * 利息收入
      *
@@ -90,7 +92,6 @@ public class BankMyProductController extends BaseController {
     }
 
 
-
     @PostMapping("selectInterestPaymentMethod")
     public Result<List<String>> selectInterestPaymentMethod() {
         List<String> list = bankMyProductService.selectInterestPaymentMethod();
@@ -100,10 +101,7 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("getExpectedIncomePlan")
     public Result<List<ExpectedIncomePlanVo>> getExpectedIncomePlan(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
-            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            expectedIncomeTotalTableVo.setEndTime(new Date());
-        }
+        init(expectedIncomeTotalTableVo);
         List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
@@ -111,10 +109,7 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("expectedIncome")
     public Result<StackedLineChart> expectedIncome(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
-            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            expectedIncomeTotalTableVo.setEndTime(new Date());
-        }
+        init(expectedIncomeTotalTableVo);
         StackedLineChart list = bankMyProductService.expectedIncome(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
@@ -122,10 +117,7 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("expectedIncomeTable")
     public Result<List<List<String>>> expectedIncomeTable(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
-            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            expectedIncomeTotalTableVo.setEndTime(new Date());
-        }
+        init(expectedIncomeTotalTableVo);
         List<List<String>> list = bankMyProductService.expectedIncomeTable(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
@@ -133,10 +125,7 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("expectedIncomeTotal")
     public Result<StackedLineChart> expectedIncomeTotal(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
-            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            expectedIncomeTotalTableVo.setEndTime(new Date());
-        }
+        init(expectedIncomeTotalTableVo);
         StackedLineChart list = bankMyProductService.expectedIncomeTotal(expectedIncomeTotalTableVo);
 
         return Result.sucess(list);
@@ -144,22 +133,29 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("expectedIncomeTotalTable")
     public Result<List<List<String>>> expectedIncomeTotalTable(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
-            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            expectedIncomeTotalTableVo.setEndTime(new Date());
-        }
+        init(expectedIncomeTotalTableVo);
         List<List<String>> list = bankMyProductService.expectedIncomeTotalTable(expectedIncomeTotalTableVo);
         return Result.sucess(list);
     }
 
     @PostMapping("getAnalysisTotalVo")
     public Result<List<AnalysisTotalVo>> getAnalysisTotalVo(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
-        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
-            expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
-            expectedIncomeTotalTableVo.setEndTime(new Date());
-        }
+        init(expectedIncomeTotalTableVo);
         List<AnalysisTotalVo> list = bankMyProductService.getAnalysisTotalVo(expectedIncomeTotalTableVo);
         return Result.sucess(list);
     }
 
+    private void init(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) {
+        if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
+            if (StringUtils.isNotEmpty(expectedIncomeTotalTableVo.getTime())) {
+                int month = Integer.valueOf(expectedIncomeTotalTableVo.getTime().substring(5, 7));
+                logger.info("{}:{}", expectedIncomeTotalTableVo.getTime(), month);
+                expectedIncomeTotalTableVo.setStartTime(TimeUtils.getFirstDayOfMonth(month));
+                expectedIncomeTotalTableVo.setEndTime(TimeUtils.getLastDayOfMonth(month));
+            } else {
+                expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
+                expectedIncomeTotalTableVo.setEndTime(new Date());
+            }
+        }
+    }
 }
