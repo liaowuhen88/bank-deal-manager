@@ -44,6 +44,16 @@ public class BankMyProductController extends BaseController {
         int code = bankMyProductService.update(bankMyProduct);
         return Result.sucess(code);
     }
+
+
+    @PostMapping("delete")
+    public Result<Integer> delete(@Validated @RequestBody IdVo idVo) {
+        BankMyProduct bankMyProduct = new BankMyProduct();
+        bankMyProduct.setId(idVo.getId());
+        bankMyProduct.setState(3);
+        int code = bankMyProductService.update(bankMyProduct);
+        return Result.sucess(code);
+    }
     /**
      * 利息收入
      *

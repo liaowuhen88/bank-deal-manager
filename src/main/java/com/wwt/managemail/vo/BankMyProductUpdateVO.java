@@ -34,5 +34,6 @@ public class BankMyProductUpdateVO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date interestStartTime;
 
+    private Integer state;
 
 }
