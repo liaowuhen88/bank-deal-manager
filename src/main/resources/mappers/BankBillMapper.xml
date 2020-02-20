@@ -63,7 +63,7 @@
             resultType="com.wwt.managemail.vo.BankBillTotalVo">
         select DATE_FORMAT(transaction_time,'%Y-%m') as time,sum(transaction_amount)
         total_transaction_amount,transaction_type from bank_bill
-        where 1 = 1
+        where bank_bill.my_product_id in (select id from bank_my_product where bank_my_product.state in (1,2))
         <if test="startTime != null">
             and transaction_time &gt;= #{startTime,jdbcType=DATE}
         </if>

@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/bankMyProducts")
@@ -37,6 +39,7 @@ public class BankMyProductController extends BaseController {
     BankProductService bankProductService;
     @Autowired
     BankBillService billService;
+
     @PostMapping("buy")
     public Result<Integer> buy(@RequestBody BankMyProduct bankMyProduct) {
         int code = bankMyProductService.buy(bankMyProduct);
@@ -113,20 +116,55 @@ public class BankMyProductController extends BaseController {
 
     @PostMapping("getExpectedIncomePlanAndReal")
     public Result<List<ExpectedIncomePlanVo>> getExpectedIncomePlanAndReal(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+        //1.预期利息收入
         init(expectedIncomeTotalTableVo);
-        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(expectedIncomeTotalTableVo);
+        // 获取产品数据
+        BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(new Integer[]{1, 2});
+        List<BankMyProductVo> vos = bankMyProductService.select(bankMyProductQueryVO);
+        // 生成预期利息计划表
+        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(expectedIncomeTotalTableVo, vos);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        for (BankMyProductVo vo : vos) {
+            if (expectedIncomeTotalTableVo.getStartTime().getTime() <= vo.getDueTime().getTime() && expectedIncomeTotalTableVo.getEndTime().getTime() >= vo.getDueTime().getTime()) {
+                ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
+                planVo.setId(Integer.valueOf(vo.getId()));
+                planVo.setTime(sdf.format(vo.getDueTime()));
+                planVo.setExpectedInvestmentAmount(vo.getInvestmentAmount());
+                list.add(planVo);
+            }
+        }
+        // 查询已删除订单
+        bankMyProductQueryVO = new BankMyProductQueryVO();
+        bankMyProductQueryVO.setState(new Integer[]{3});
+        List<BankMyProductVo> bankMyProductVos = bankMyProductService.select(bankMyProductQueryVO);
+        Map<Integer, BankMyProductVo> map = bankMyProductVos.stream().collect(
+                Collectors.toMap(BankMyProductVo::getId, p -> p));
+
+        //查询交易流水
         QueryByTimeVo queryByTimeVo = new QueryByTimeVo();
         queryByTimeVo.setTime(expectedIncomeTotalTableVo.getTime());
-        queryByTimeVo.setTransactionTypes(new int[]{6});
+        queryByTimeVo.setTransactionTypes(new int[]{6, 11});
         List<BankBillVo> bankBillVos = billService.queryNoPage(queryByTimeVo);
         if (null != bankBillVos) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
             for (BankBillVo vo : bankBillVos) {
+                // 如果是删除订单，则不统计
+                if (null != map.get(Integer.valueOf(vo.getMyProductId()))) {
+                    logger.info("******{}", vo.getMyProductId());
+                    continue;
+                }
                 ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
                 planVo.setId(Integer.valueOf(vo.getMyProductId()));
                 planVo.setTime(sdf.format(vo.getTransactionTime()));
-                planVo.setRealInterestIncome(vo.getTransactionAmount());
-                list.add(planVo);
+                if (vo.getTransactionType() == 6) {
+                    planVo.setRealInterestIncome(vo.getTransactionAmount());
+                    list.add(planVo);
+                } else if (vo.getTransactionType() == 11) {
+                    planVo.setInvestmentAmount(vo.getTransactionAmount());
+                    list.add(planVo);
+                }
+
             }
         }
         list.sort(Comparator.comparing(ExpectedIncomePlanVo::getId));

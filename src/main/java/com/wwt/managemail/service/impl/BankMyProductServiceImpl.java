@@ -459,6 +459,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         // 获取实际收益
         BankBillQuery bankBillQuery = new BankBillQuery();
         List<BankBillTotalVo> bankBillTotalVos = bankBillService.totalByMonth(bankBillQuery);
+
         Map<Integer, Map<String, BankBillTotalVo>> map = bankBillService.getBankBillTotalVoMap(bankBillTotalVos);
         Map<String, BankBillTotalVo> bankBillTotalVoMap = map.get(TransactionTypeEnum.investmentIncome.getCode());
         // 获取实际理财赎回

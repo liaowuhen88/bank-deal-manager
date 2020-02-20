@@ -30,4 +30,14 @@ public class ExpectedIncomePlanVo {
      * 付息方式
      */
     private String interestPaymentMethod;
+
+    /**
+     * 预期本金赎回
+     */
+    private BigDecimal expectedInvestmentAmount;
+
+    /**
+     * 本金赎回
+     */
+    private BigDecimal investmentAmount;
 }
