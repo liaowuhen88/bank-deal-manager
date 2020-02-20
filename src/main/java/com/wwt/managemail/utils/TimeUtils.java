@@ -81,8 +81,9 @@ public class TimeUtils {
      * @param month
      * @return
      */
-    public static Date getFirstDayOfMonth(int month) {
+    public static Date getFirstDayOfMonth(int year, int month) {
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
         // 设置月份
         calendar.set(Calendar.MONTH, month - 1);
         // 获取某月最小天数
@@ -93,8 +94,9 @@ public class TimeUtils {
         return calendar.getTime();
     }
 
-    public static Date getLastDayOfMonth(int month) {
+    public static Date getLastDayOfMonth(int year, int month) {
         Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.YEAR, year);
         // 设置月份
         calendar.set(Calendar.MONTH, month - 1);
         // 获取某月最大天数
@@ -114,7 +116,7 @@ public class TimeUtils {
     public static void main(String[] args) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-        System.out.println(sdf.format(getFirstDayOfMonth(2)));
-        System.out.println(sdf.format(getLastDayOfMonth(2)));
+        System.out.println(sdf.format(getFirstDayOfMonth(2019, 2)));
+        System.out.println(sdf.format(getLastDayOfMonth(2019, 2)));
     }
 }

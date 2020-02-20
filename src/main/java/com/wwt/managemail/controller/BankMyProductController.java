@@ -174,10 +174,11 @@ public class BankMyProductController extends BaseController {
     private void init(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) {
         if (null == expectedIncomeTotalTableVo.getStartTime() && null == expectedIncomeTotalTableVo.getEndTime()) {
             if (StringUtils.isNotEmpty(expectedIncomeTotalTableVo.getTime())) {
+                int year = Integer.valueOf(expectedIncomeTotalTableVo.getTime().substring(0, 4));
                 int month = Integer.valueOf(expectedIncomeTotalTableVo.getTime().substring(5, 7));
-                logger.info("{}:{}", expectedIncomeTotalTableVo.getTime(), month);
-                expectedIncomeTotalTableVo.setStartTime(TimeUtils.getFirstDayOfMonth(month));
-                expectedIncomeTotalTableVo.setEndTime(TimeUtils.getLastDayOfMonth(month));
+                logger.info("{}，年：{}，月：{}", expectedIncomeTotalTableVo.getTime(), year, month);
+                expectedIncomeTotalTableVo.setStartTime(TimeUtils.getFirstDayOfMonth(year, month));
+                expectedIncomeTotalTableVo.setEndTime(TimeUtils.getLastDayOfMonth(year, month));
             } else {
                 expectedIncomeTotalTableVo.setStartTime(TimeUtils.getCurrentYeadFirstDay());
                 expectedIncomeTotalTableVo.setEndTime(new Date());
