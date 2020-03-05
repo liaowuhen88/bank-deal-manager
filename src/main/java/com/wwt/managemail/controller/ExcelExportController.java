@@ -41,12 +41,11 @@ public class ExcelExportController extends BaseController {
     }
 
     @RequestMapping(value = "/excelExport")
-    public ResponseEntity<Resource> excel2007Export(HttpServletResponse response) {
+    public ResponseEntity<Resource> excel2007Export(BankMyProductQueryVO bankMyProductQueryVO, HttpServletResponse response) {
         try {
             ClassPathResource cpr = new ClassPathResource("/templates/" + "investment.xlsx");
             InputStream is = cpr.getInputStream();
             Workbook workbook = new XSSFWorkbook(is);
-            BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
             List<BankMyProductVo> list = bankMyProductService.select(bankMyProductQueryVO);
             org.apache.poi.ss.usermodel.Sheet sheet0 = workbook.getSheetAt(0);
             //这里作为演示，造几个演示数据，模拟数据库里查数据
