@@ -76,9 +76,15 @@ public class ExcelExportController extends BaseController {
                 row.createCell(count++).setCellValue(vo.getExpectedInterestIncomeTotal().doubleValue());
                 row.createCell(count++).setCellValue(vo.getTotalEffectiveInterestIncome().doubleValue());
                 row.createCell(count++).setCellValue(vo.getPrincipalAndInterestIncome().doubleValue());
-                String status = "合约中";
-                if (2 == vo.getState()) {
+                String status = "";
+                if (1 == vo.getState()) {
+                    status = "合约中";
+                } else if (2 == vo.getState()) {
                     status = "已赎回";
+                } else if (3 == vo.getState()) {
+                    status = "作废删除";
+                } else {
+                    status = vo.getState() + "未知";
                 }
                 row.createCell(count++).setCellValue(status);
 

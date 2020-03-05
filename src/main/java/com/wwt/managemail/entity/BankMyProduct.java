@@ -86,6 +86,10 @@ public class BankMyProduct {
     private String creator;
     private Date createTime;
     private String remark;
+
+    /**
+     * 3 作废删除/ 2 已赎回/ 1 合约中
+     */
     private Integer state;
 
     public BigDecimal getPrincipalAndInterestIncome() {
