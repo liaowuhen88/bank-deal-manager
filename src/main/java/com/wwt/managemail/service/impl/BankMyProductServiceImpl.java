@@ -73,25 +73,38 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public int redeem(ProductTransaction bankBill) {
+        // 获取理财记录
+        BankMyProduct bankMyProductDb = bankMyProductMapper.selectByPrimaryKey(bankBill.getMyProductId());
+        BigDecimal investmentAmount = bankBill.getInvestmentAmount();
         // 基金赎回，增加利息，修改状态
         BankMyProduct bankMyProduct = new BankMyProduct();
         bankMyProduct.setId(bankBill.getMyProductId());
         bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
         bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
-        bankMyProduct.setState(2);
+
+        if (investmentAmount.compareTo(bankMyProductDb.getInvestmentAmount()) == 0) {
+            // 全部赎回
+            bankMyProduct.setState(2);
+        } else if (investmentAmount.compareTo(bankMyProductDb.getInvestmentAmount()) == -1) {
+            // 部分赎回  赎回金额小于总金额
+            bankMyProduct.setInvestmentAmount(BigDecimalUtils.sub(bankMyProductDb.getInvestmentAmount(), investmentAmount));
+        } else {
+            //异常
+            throw new RuntimeException("赎回金额，已大于投资总金额，请重新填写");
+        }
         bankMyProductMapper.transaction(bankMyProduct);
         //账单，先记录利息
         bankBill.setTransactionType(TransactionTypeEnum.investmentIncome.getCode());
         bankBillService.insertSelective(bankBill);
         bankService.transaction(bankBill);
         // 在记录本金
-        BankMyProduct bankMyProductDb = bankMyProductMapper.selectByPrimaryKey(bankBill.getMyProductId());
-        bankBill.setTransactionAmount(bankMyProductDb.getInvestmentAmount());
+
+        bankBill.setTransactionAmount(investmentAmount);
         bankBill.setTransactionType(TransactionTypeEnum.investment_redeem_principal.getCode());
         bankBill.setId(null);
         bankBillService.insertSelective(bankBill);
         //银行卡做账
-        bankBill.setTransactionAmount(bankMyProductDb.getInvestmentAmount());
+        bankBill.setTransactionAmount(investmentAmount);
         bankService.transaction(bankBill);
         return 0;
     }

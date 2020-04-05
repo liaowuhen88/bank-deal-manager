@@ -45,6 +45,10 @@ public class BigDecimalUtils {
         return b1.subtract(b2);
     }
 
+    public static BigDecimal sub(BigDecimal b1, BigDecimal b2) {
+        return b1.subtract(b2);
+    }
+
     /**
      * 高精度乘法
      *

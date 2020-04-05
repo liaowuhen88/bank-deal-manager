@@ -14,6 +14,10 @@
             <if test="state != null">
                 `state` = #{state,jdbcType=INTEGER},
             </if>
+            <if test="investmentAmount != null">
+                investment_amount = #{investmentAmount,jdbcType=INTEGER},
+            </if>
+
         </set>
         where id = #{id,jdbcType=INTEGER}
 
