@@ -9,6 +9,7 @@ import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankProductService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.BeanUtil;
+import com.wwt.managemail.utils.BigDecimalUtils;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
 import org.apache.commons.lang3.StringUtils;
@@ -21,10 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -146,26 +144,30 @@ public class BankMyProductController extends BaseController {
         queryByTimeVo.setTime(expectedIncomeTotalTableVo.getTime());
         queryByTimeVo.setTransactionTypes(new int[]{6, 11});
         List<BankBillVo> bankBillVos = billService.queryNoPage(queryByTimeVo);
+        Map<Integer, ExpectedIncomePlanVo> mapBill = new HashMap<>();
         if (null != bankBillVos) {
 
             for (BankBillVo vo : bankBillVos) {
+                Integer myProductId = Integer.valueOf(vo.getMyProductId());
                 // 如果是删除订单，则不统计
                 if (null != map.get(Integer.valueOf(vo.getMyProductId()))) {
                     logger.info("******{}", vo.getMyProductId());
                     continue;
                 }
-                ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
-                planVo.setId(Integer.valueOf(vo.getMyProductId()));
-                planVo.setTime(sdf.format(vo.getTransactionTime()));
-                if (vo.getTransactionType() == 6) {
-                    planVo.setRealInterestIncome(vo.getTransactionAmount());
-                    list.add(planVo);
-                } else if (vo.getTransactionType() == 11) {
-                    planVo.setInvestmentAmount(vo.getTransactionAmount());
-                    list.add(planVo);
+                ExpectedIncomePlanVo planVo = mapBill.get(myProductId);
+                if (null == planVo) {
+                    planVo = new ExpectedIncomePlanVo();
+                    planVo.setId(myProductId);
+                    planVo.setTime(sdf.format(vo.getTransactionTime()));
+                    mapBill.put(myProductId, planVo);
                 }
-
+                if (vo.getTransactionType() == 6) {
+                    planVo.setRealInterestIncome(BigDecimalUtils.add(vo.getTransactionAmount(), planVo.getRealInterestIncome()));
+                } else if (vo.getTransactionType() == 11) {
+                    planVo.setInvestmentAmount(BigDecimalUtils.add(vo.getTransactionAmount(), planVo.getInvestmentAmount()));
+                }
             }
+            list.addAll(mapBill.values());
         }
         list.sort(Comparator.comparing(ExpectedIncomePlanVo::getId));
         return Result.sucess(list);

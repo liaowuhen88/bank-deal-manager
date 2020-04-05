@@ -9,6 +9,7 @@ import com.wwt.managemail.mapper.BankMyProductMapper;
 import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankMyProductService;
 import com.wwt.managemail.service.BankService;
+import com.wwt.managemail.utils.BigDecimalUtils;
 import com.wwt.managemail.utils.MoneyUtills;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -284,33 +286,38 @@ public class BankMyProductServiceImpl implements BankMyProductService {
             for (BankMyProductVo vo : list) {
                 Date start = vo.getInterestStartTime();
                 Date end = vo.getDueTime();
+                Date base = vo.getProfitDate();
+                String startTime = sdf.format(start);
                 // 设置为月份
                 if ("月付".equals(vo.getInterestPaymentMethod())) {
-                    List<String> times = TimeUtils.getMonthBetween(start, end, sdf);
+                    List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf);
                     logger.info("{}：{}", vo.getInterestPaymentMethod(), JSON.toJSONString(times));
                     if (null != times) {
                         for (String time : times) {
-                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
+                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30, vo);
+                            startTime = time;
                             planVos.add(planVo);
                         }
                     }
                     // 获取所有的月份  start---end
                 } else if ("季付".equals(vo.getInterestPaymentMethod())) {
-                    List<String> times = TimeUtils.getMonthBetween(start, end, sdf, 3);
+                    List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf, 3);
                     logger.info("季付：{}", JSON.toJSONString(times));
                     if (null != times) {
                         for (String time : times) {
-                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
+                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30 * 3, vo);
+                            startTime = time;
                             planVos.add(planVo);
                         }
                     }
                     // 获取所有的月份  start---end
                 } else if ("半年付".equals(vo.getInterestPaymentMethod())) {
-                    List<String> times = TimeUtils.getMonthBetween(start, end, sdf, 6);
+                    List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf, 6);
                     logger.info("半年付：{}", JSON.toJSONString(times));
                     if (null != times) {
                         for (String time : times) {
-                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
+                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30 * 6, vo);
+                            startTime = time;
                             planVos.add(planVo);
                         }
                     }
@@ -345,7 +352,23 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         return getExpectedIncomePlan(expectedIncomeTotalTableVo, list);
     }
 
-    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String time, BankMyProductVo vo) {
+    /**
+     * @param startTime 计息开始时间
+     * @param time      收息日期
+     * @param vo
+     * @return
+     */
+    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String startTime, String time, int totalDays, BankMyProductVo vo) throws ParseException {
+        ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
+        planVo.setId(vo.getId());
+        planVo.setTime(time);
+        BigDecimal expectedInterestIncomeMonth = getRealExpectedInterestIncomeMonth(startTime, time, totalDays, vo.getExpectedInterestIncomeMonth());
+        planVo.setExpectedInterestIncomeMonth(expectedInterestIncomeMonth);
+        planVo.setInterestPaymentMethod(vo.getInterestPaymentMethod());
+        return planVo;
+    }
+
+    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String time, BankMyProductVo vo) throws ParseException {
         ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
         planVo.setId(vo.getId());
         planVo.setTime(time);
@@ -353,6 +376,20 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         planVo.setInterestPaymentMethod(vo.getInterestPaymentMethod());
         return planVo;
     }
+
+    private BigDecimal getRealExpectedInterestIncomeMonth(String startTime, String time, int totalDays, BigDecimal expectedInterestIncomeMonth) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        int dates = TimeUtils.daysBetween(sdf.parse(startTime), sdf.parse(time));
+        // 不满一个月
+        if (dates < totalDays) {
+            BigDecimal days = BigDecimalUtils.div(expectedInterestIncomeMonth.toString(), totalDays + "");
+            return BigDecimalUtils.mul(days.toString(), dates + "");
+        } else {
+            return expectedInterestIncomeMonth;
+        }
+
+    }
+
     @Override
     public StackedLineChart expectedIncomeTotal(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         //创建图表数据
