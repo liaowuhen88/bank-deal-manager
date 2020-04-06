@@ -363,6 +363,10 @@ public class BankMyProductServiceImpl implements BankMyProductService {
             String time = sdf.format(vo.getProfitDate());
             ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
             planVos.add(planVo);
+        } else if ("不定期返还本金".equals(vo.getInterestPaymentMethod())) {
+            String time = sdf.format(vo.getProfitDate());
+            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
+            planVos.add(planVo);
         }
 
         return planVos;
