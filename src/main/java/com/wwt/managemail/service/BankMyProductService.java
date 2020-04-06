@@ -55,6 +55,8 @@ public interface BankMyProductService {
 
     List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo, List<BankMyProductVo> list) throws Exception;
 
+    List<ExpectedIncomePlanVo> getExpectedIncomePlan(BankMyProduct bankMyProduct) throws Exception;
+
     StackedLineChart expectedIncome(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;
 
     List<List<String>> expectedIncomeTable(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception;

@@ -16,5 +16,7 @@ public class ExpectedIncomeTotalTableVo {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date endTime;
 
+    private Integer myProductId;
+
     private String time;
 }

@@ -82,11 +82,13 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
         bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
 
+
         if (investmentAmount.compareTo(bankMyProductDb.getInvestmentAmount()) == 0) {
             // 全部赎回
             bankMyProduct.setState(2);
         } else if (investmentAmount.compareTo(bankMyProductDb.getInvestmentAmount()) == -1) {
             // 部分赎回  赎回金额小于总金额
+            bankMyProduct.setInterestStartTime(bankBill.getTransactionTime());
             bankMyProduct.setInvestmentAmount(BigDecimalUtils.sub(bankMyProductDb.getInvestmentAmount(), investmentAmount));
         } else {
             //异常
@@ -297,49 +299,8 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         if (null != list) {
             for (BankMyProductVo vo : list) {
-                Date start = vo.getInterestStartTime();
-                Date end = vo.getDueTime();
-                Date base = vo.getProfitDate();
-                String startTime = sdf.format(start);
-                // 设置为月份
-                if ("月付".equals(vo.getInterestPaymentMethod())) {
-                    List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf);
-                    logger.info("{}：{}", vo.getInterestPaymentMethod(), JSON.toJSONString(times));
-                    if (null != times) {
-                        for (String time : times) {
-                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30, vo);
-                            startTime = time;
-                            planVos.add(planVo);
-                        }
-                    }
-                    // 获取所有的月份  start---end
-                } else if ("季付".equals(vo.getInterestPaymentMethod())) {
-                    List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf, 3);
-                    logger.info("季付：{}", JSON.toJSONString(times));
-                    if (null != times) {
-                        for (String time : times) {
-                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30 * 3, vo);
-                            startTime = time;
-                            planVos.add(planVo);
-                        }
-                    }
-                    // 获取所有的月份  start---end
-                } else if ("半年付".equals(vo.getInterestPaymentMethod())) {
-                    List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf, 6);
-                    logger.info("半年付：{}", JSON.toJSONString(times));
-                    if (null != times) {
-                        for (String time : times) {
-                            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30 * 6, vo);
-                            startTime = time;
-                            planVos.add(planVo);
-                        }
-                    }
-                    // 获取所有的月份  start---end
-                } else if ("一次性".equals(vo.getInterestPaymentMethod())) {
-                    String time = sdf.format(vo.getProfitDate());
-                    ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
-                    planVos.add(planVo);
-                }
+                List<ExpectedIncomePlanVo> planVos1 = getExpectedIncomePlan(vo);
+                planVos.addAll(planVos1);
             }
 
             if (null != expectedIncomeTotalTableVo.getStartTime() && null != expectedIncomeTotalTableVo.getEndTime()) {
@@ -357,6 +318,57 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
     @Override
+    public List<ExpectedIncomePlanVo> getExpectedIncomePlan(BankMyProduct vo) throws Exception {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        List<ExpectedIncomePlanVo> planVos = new ArrayList<>();
+        Date start = vo.getInterestStartTime();
+        Date end = vo.getDueTime();
+        Date base = vo.getProfitDate();
+        String startTime = sdf.format(start);
+        // 设置为月份
+        if ("月付".equals(vo.getInterestPaymentMethod())) {
+            List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf);
+            logger.info("{}：{}", vo.getInterestPaymentMethod(), JSON.toJSONString(times));
+            if (null != times) {
+                for (String time : times) {
+                    ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30, vo);
+                    startTime = time;
+                    planVos.add(planVo);
+                }
+            }
+            // 获取所有的月份  start---end
+        } else if ("季付".equals(vo.getInterestPaymentMethod())) {
+            List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf, 3);
+            logger.info("季付：{}", JSON.toJSONString(times));
+            if (null != times) {
+                for (String time : times) {
+                    ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30 * 3, vo);
+                    startTime = time;
+                    planVos.add(planVo);
+                }
+            }
+            // 获取所有的月份  start---end
+        } else if ("半年付".equals(vo.getInterestPaymentMethod())) {
+            List<String> times = TimeUtils.getMonthBetween(start, end, base, sdf, 6);
+            logger.info("半年付：{}", JSON.toJSONString(times));
+            if (null != times) {
+                for (String time : times) {
+                    ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(startTime, time, 30 * 6, vo);
+                    startTime = time;
+                    planVos.add(planVo);
+                }
+            }
+            // 获取所有的月份  start---end
+        } else if ("一次性".equals(vo.getInterestPaymentMethod())) {
+            String time = sdf.format(vo.getProfitDate());
+            ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
+            planVos.add(planVo);
+        }
+
+        return planVos;
+    }
+
+    @Override
     public List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
         // 获取产品数据
         BankMyProductQueryVO bankMyProductQueryVO = new BankMyProductQueryVO();
@@ -371,7 +383,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
      * @param vo
      * @return
      */
-    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String startTime, String time, int totalDays, BankMyProductVo vo) throws ParseException {
+    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String startTime, String time, int totalDays, BankMyProduct vo) throws ParseException {
         ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
         planVo.setId(vo.getId());
         planVo.setTime(time);
@@ -381,7 +393,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         return planVo;
     }
 
-    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String time, BankMyProductVo vo) throws ParseException {
+    private ExpectedIncomePlanVo getExpectedIncomePlanVo(String time, BankMyProduct vo) throws ParseException {
         ExpectedIncomePlanVo planVo = new ExpectedIncomePlanVo();
         planVo.setId(vo.getId());
         planVo.setTime(time);

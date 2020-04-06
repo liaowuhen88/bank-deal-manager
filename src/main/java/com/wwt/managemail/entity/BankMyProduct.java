@@ -80,6 +80,9 @@ public class BankMyProduct {
      */
     private String interestPaymentMethod;
 
+    /**
+     * 起息日期
+     */
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date interestStartTime;

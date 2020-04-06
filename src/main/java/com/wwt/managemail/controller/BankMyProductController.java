@@ -1,5 +1,6 @@
 package com.wwt.managemail.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.wwt.managemail.common.Result;
 import com.wwt.managemail.entity.Bank;
 import com.wwt.managemail.entity.BankMyProduct;
@@ -225,4 +226,22 @@ public class BankMyProductController extends BaseController {
             }
         }
     }
+
+
+    @PostMapping("getExpectedIncome")
+    public Result<ExpectedIncomePlanVo> getExpectedIncome(@Validated @RequestBody ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo) throws Exception {
+
+        BankMyProduct vos = bankMyProductService.selectByPrimaryKey(expectedIncomeTotalTableVo.getMyProductId());
+        // 生成预期利息计划表
+        List<ExpectedIncomePlanVo> list = bankMyProductService.getExpectedIncomePlan(vos);
+        logger.info(JSON.toJSONString(list));
+        Map<String, ExpectedIncomePlanVo> map = list.stream().collect(
+                Collectors.toMap(ExpectedIncomePlanVo::getTime, p -> p));
+
+
+        return Result.sucess(map.get(expectedIncomeTotalTableVo.getTime()));
+        //return Result.sucess(list);
+    }
+
+
 }
