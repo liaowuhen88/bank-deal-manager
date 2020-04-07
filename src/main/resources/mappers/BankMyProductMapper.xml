@@ -17,6 +17,9 @@
             <if test="investmentAmount != null">
                 investment_amount = #{investmentAmount,jdbcType=INTEGER},
             </if>
+            <if test="interestStartTime != null">
+                interest_start_time = #{interestStartTime,jdbcType=INTEGER},
+            </if>
 
         </set>
         where id = #{id,jdbcType=INTEGER}
