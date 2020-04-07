@@ -63,12 +63,24 @@
             resultType="com.wwt.managemail.vo.BankBillTotalVo">
         select DATE_FORMAT(transaction_time,'%Y-%m') as time,sum(transaction_amount)
         total_transaction_amount,transaction_type from bank_bill
-        where bank_bill.my_product_id in (select id from bank_my_product where bank_my_product.state in (1,2))
+        where bank_bill.my_product_id in
+        (select id from bank_my_product where bank_my_product.state in (1,2)
+        <if test="myProductId != null">
+            and id = #{myProductId,jdbcType=INTEGER}
+        </if>
+        )
         <if test="startTime != null">
             and transaction_time &gt;= #{startTime,jdbcType=DATE}
         </if>
         <if test="endTime != null">
             and transaction_time &lt;= #{endTime,jdbcType=DATE}
+        </if>
+        <if test="transactionTypes != null and transactionTypes.length >0 ">
+            and transaction_type in
+            <foreach collection="transactionTypes" index="index" item="item" open="("
+                     separator="," close=")">
+                #{item}
+            </foreach>
         </if>
         group by time ,transaction_type
 

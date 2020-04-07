@@ -364,11 +364,26 @@ public class BankMyProductServiceImpl implements BankMyProductService {
             ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
             planVos.add(planVo);
         } else if ("不定期返还本金".equals(vo.getInterestPaymentMethod())) {
+            // 获取实际收息日期
+            BankBillQuery bankBillQuery = new BankBillQuery();
+            bankBillQuery.setMyProductId(vo.getId());
+            int[] transactionTypes = new int[]{TransactionTypeEnum.investmentIncome.getCode()};
+            bankBillQuery.setTransactionTypes(transactionTypes);
+            List<BankBillTotalVo> bills = bankBillService.totalByMonth(bankBillQuery);
+            if (null != bills) {
+                BankMyProduct copy = new BankMyProduct();
+                BeanUtils.copyProperties(vo, copy);
+                for (BankBillTotalVo bill : bills) {
+                    String time = bill.getTime();
+                    copy.setExpectedInterestIncomeMonth(bill.getTotalTransactionAmount());
+                    ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, copy);
+                    planVos.add(planVo);
+                }
+            }
             String time = sdf.format(vo.getProfitDate());
             ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
             planVos.add(planVo);
         }
-
         return planVos;
     }
 
