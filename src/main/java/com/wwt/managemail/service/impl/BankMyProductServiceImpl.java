@@ -381,7 +381,23 @@ public class BankMyProductServiceImpl implements BankMyProductService {
                 }
             }
             String time = sdf.format(vo.getProfitDate());
+            int dates = TimeUtils.daysBetween(sdf.parse(startTime), sdf.parse(time));
             ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
+            // this.bankMyProduct.investmentAmount +
+            //        "(投资金额)*" +
+            //        this.bankMyProduct.expectedInterestRate / 100 +
+            //        "(利率)/" +
+            //        this.bankBill.recalculationParam.days +
+            //        "(全年天数)*" +
+            //        days +
+            //        "(利息天数)";
+
+            BigDecimal money = vo.getInvestmentAmount().
+                    multiply(vo.getExpectedInterestRate()).
+                    divide(new BigDecimal("100"), 2, BigDecimal.ROUND_HALF_UP).
+                    divide(new BigDecimal("360"), 2, BigDecimal.ROUND_HALF_UP).
+                    multiply(new BigDecimal(dates + ""));
+            planVo.setExpectedInterestIncomeMonth(money);
             planVos.add(planVo);
         }
         return planVos;
