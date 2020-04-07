@@ -30,6 +30,13 @@ public class BankMyProductUpdateVO {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dueTime;
 
+    /**
+     * 最近一次收息日期
+     */
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date lastProfitDate;
+
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date interestStartTime;

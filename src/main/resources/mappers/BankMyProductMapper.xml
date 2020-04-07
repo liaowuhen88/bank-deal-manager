@@ -17,8 +17,8 @@
             <if test="investmentAmount != null">
                 investment_amount = #{investmentAmount,jdbcType=INTEGER},
             </if>
-            <if test="interestStartTime != null">
-                interest_start_time = #{interestStartTime,jdbcType=INTEGER},
+            <if test="lastProfitDate != null">
+                last_profit_date = #{lastProfitDate,jdbcType=INTEGER},
             </if>
 
         </set>

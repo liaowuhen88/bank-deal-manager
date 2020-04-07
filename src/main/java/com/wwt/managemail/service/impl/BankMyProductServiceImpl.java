@@ -81,14 +81,14 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankMyProduct.setId(bankBill.getMyProductId());
         bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
         bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
-
+        bankMyProduct.setLastProfitDate(bankBill.getTransactionTime());
 
         if (investmentAmount.compareTo(bankMyProductDb.getInvestmentAmount()) == 0) {
             // 全部赎回
             bankMyProduct.setState(2);
         } else if (investmentAmount.compareTo(bankMyProductDb.getInvestmentAmount()) == -1) {
             // 部分赎回  赎回金额小于总金额
-            bankMyProduct.setInterestStartTime(bankBill.getTransactionTime());
+
             bankMyProduct.setInvestmentAmount(BigDecimalUtils.sub(bankMyProductDb.getInvestmentAmount(), investmentAmount));
         } else {
             //异常
@@ -118,6 +118,7 @@ public class BankMyProductServiceImpl implements BankMyProductService {
         bankMyProduct.setId(bankBill.getMyProductId());
         bankMyProduct.setTotalEffectiveInterestIncome(bankBill.getTransactionAmount());
         bankMyProduct.setProfitDate(bankBill.getNextProfitDate());
+        bankMyProduct.setLastProfitDate(bankBill.getTransactionTime());
         bankMyProductMapper.transaction(bankMyProduct);
         bankService.transaction(bankBill);
         bankBillService.insertSelective(bankBill);
@@ -381,7 +382,8 @@ public class BankMyProductServiceImpl implements BankMyProductService {
                 }
             }
             String time = sdf.format(vo.getProfitDate());
-            int dates = TimeUtils.daysBetween(sdf.parse(startTime), sdf.parse(time));
+            Date real = null != vo.getLastProfitDate() ? vo.getLastProfitDate() : vo.getInterestStartTime();
+            int dates = TimeUtils.daysBetween(real, sdf.parse(time));
             ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, vo);
             // this.bankMyProduct.investmentAmount +
             //        "(投资金额)*" +

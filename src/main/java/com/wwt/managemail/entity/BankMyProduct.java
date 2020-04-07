@@ -63,6 +63,9 @@ public class BankMyProduct {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date dueTime;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private Date lastProfitDate;
     /**
      * 产品类型
      */
