@@ -10,4 +10,5 @@ public class QueryByTimeVo {
     private String time;
     @NotNull
     private int[] transactionTypes;
+    private Integer myProductId;
 }

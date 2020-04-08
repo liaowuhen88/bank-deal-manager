@@ -17,6 +17,7 @@ public class BankBillVo {
     private Integer transactionType;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date transactionTime;
+
     private String creator;
 
     private Date createTime;

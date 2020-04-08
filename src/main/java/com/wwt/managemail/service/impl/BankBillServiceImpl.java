@@ -10,6 +10,7 @@ import com.wwt.managemail.service.BankBillService;
 import com.wwt.managemail.service.BankService;
 import com.wwt.managemail.utils.TimeUtils;
 import com.wwt.managemail.vo.*;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -66,11 +67,14 @@ public class BankBillServiceImpl implements BankBillService {
     public List<BankBillVo> queryNoPage(QueryByTimeVo queryByTimeVo) {
         BankBillQuery bankBillQuery = new BankBillQuery();
         bankBillQuery.setTransactionTypes(queryByTimeVo.getTransactionTypes());
-        int year = Integer.valueOf(queryByTimeVo.getTime().substring(0, 4));
-        int month = Integer.valueOf(queryByTimeVo.getTime().substring(5, 7));
-        logger.info("时间{}:年：{},月：{}", queryByTimeVo.getTime(), year, month);
-        bankBillQuery.setStartTime(TimeUtils.getFirstDayOfMonth(year, month));
-        bankBillQuery.setEndTime(TimeUtils.getLastDayOfMonth(year, month));
+        bankBillQuery.setMyProductId(queryByTimeVo.getMyProductId());
+        if (StringUtils.isNotEmpty(queryByTimeVo.getTime())) {
+            int year = Integer.valueOf(queryByTimeVo.getTime().substring(0, 4));
+            int month = Integer.valueOf(queryByTimeVo.getTime().substring(5, 7));
+            logger.info("时间{}:年：{},月：{}", queryByTimeVo.getTime(), year, month);
+            bankBillQuery.setStartTime(TimeUtils.getFirstDayOfMonth(year, month));
+            bankBillQuery.setEndTime(TimeUtils.getLastDayOfMonth(year, month));
+        }
         return bankBillMapper.query(bankBillQuery);
     }
 

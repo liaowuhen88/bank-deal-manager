@@ -291,7 +291,6 @@ public class BankMyProductServiceImpl implements BankMyProductService {
     }
 
 
-
     @Override
     public List<ExpectedIncomePlanVo> getExpectedIncomePlan(ExpectedIncomeTotalTableVo expectedIncomeTotalTableVo, List<BankMyProductVo> list) throws Exception {
         List<ExpectedIncomePlanVo> planVos = new ArrayList<>();
@@ -366,17 +365,19 @@ public class BankMyProductServiceImpl implements BankMyProductService {
             planVos.add(planVo);
         } else if ("不定期返还本金".equals(vo.getInterestPaymentMethod())) {
             // 获取实际收息日期
-            BankBillQuery bankBillQuery = new BankBillQuery();
+            QueryByTimeVo bankBillQuery = new QueryByTimeVo();
             bankBillQuery.setMyProductId(vo.getId());
             int[] transactionTypes = new int[]{TransactionTypeEnum.investmentIncome.getCode()};
             bankBillQuery.setTransactionTypes(transactionTypes);
-            List<BankBillTotalVo> bills = bankBillService.totalByMonth(bankBillQuery);
+
+            List<BankBillVo> bills = bankBillService.queryNoPage(bankBillQuery);
+
             if (null != bills) {
                 BankMyProduct copy = new BankMyProduct();
                 BeanUtils.copyProperties(vo, copy);
-                for (BankBillTotalVo bill : bills) {
-                    String time = bill.getTime();
-                    copy.setExpectedInterestIncomeMonth(bill.getTotalTransactionAmount());
+                for (BankBillVo bill : bills) {
+                    String time = sdf.format(bill.getTransactionTime());
+                    copy.setExpectedInterestIncomeMonth(bill.getTransactionAmount());
                     ExpectedIncomePlanVo planVo = getExpectedIncomePlanVo(time, copy);
                     planVos.add(planVo);
                 }
